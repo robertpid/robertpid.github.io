@@ -1,0 +1,301 @@
+/* ==========================================================================
+   components.css — Glassmorphism, spotlight, scrollspy, animaciones y a11y
+   ========================================================================== */
+
+/* Barra de progreso de lectura superior (Scroll-Driven Animation) */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue), #a5f3fc);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    @keyframes grow-scroll-progress {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    #scroll-progress {
+      animation: grow-scroll-progress auto linear;
+      animation-timeline: scroll();
+    }
+  }
+}
+
+/* Fondo ambiental sutil tipo blueprint / circuit grid */
+.bg-tech-grid {
+  background-image:
+    linear-gradient(to right, rgba(79, 172, 254, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 242, 254, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 85% 70% at 50% 20%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 20%, #000 40%, transparent 100%);
+}
+
+/* Glassmorphism base, hover y spotlight interactivo */
+.glass-card {
+  position: relative;
+  background: var(--bg-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  transition:
+    border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease;
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    420px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(0, 242, 254, 0.11),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glass-card > :not(canvas) {
+  position: relative;
+  z-index: 1;
+}
+
+.glass-card[data-particles-container],
+#inicio[data-particles-container] {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 242, 254, 0.45);
+  box-shadow:
+    0 12px 40px -12px rgba(0, 242, 254, 0.18),
+    0 0 0 1px rgba(79, 172, 254, 0.15) inset;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .glass-card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Gradiente de acento firma */
+.text-gradient-cyber {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 55%, #a5f3fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.btn-primary-glow {
+  background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 100%);
+  color: #040711;
+  box-shadow: 0 8px 28px -6px rgba(0, 242, 254, 0.45);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.25s ease;
+}
+
+.btn-primary-glow:hover {
+  box-shadow: 0 14px 36px -4px rgba(0, 242, 254, 0.65);
+  filter: brightness(1.06);
+}
+
+/* Enlace Skip Link accesible */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  background: var(--accent-cyan);
+  color: var(--bg-deep);
+  font-weight: 700;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Indicador de foco accesible de alto contraste */
+:where(a:any-link, button, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+/* Scrollspy nativo moderno con fallback JS (.target-current) */
+nav[data-scrollspy] {
+  scroll-target-group: auto;
+}
+
+nav[data-scrollspy] a:is(:target-current, .target-current) {
+  color: var(--accent-cyan);
+}
+
+nav[data-scrollspy] a:is(:target-current, .target-current)::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.nav-link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+  transform: scaleX(0);
+  opacity: 0;
+  transform-origin: center;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Animaciones de entrada con IntersectionObserver (solo compositor: opacity & transform) */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Micro-flotación para tarjetas alrededor del retrato Hero */
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.animate-float-1 {
+  animation: floatSlow 5.5s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: floatSlow 6.5s ease-in-out 1.2s infinite;
+}
+
+.animate-float-3 {
+  animation: floatSlow 7s ease-in-out 2.1s infinite;
+}
+
+/* Efecto sutil de scanlines CRT exclusivo de la miniatura ASHERAH */
+.crt-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 242, 254, 0.07) 0px,
+    rgba(0, 242, 254, 0.07) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* Dialog nativo para Casos de Estudio / Arquitectura */
+dialog.case-study-dialog {
+  margin: auto;
+  max-width: min(92vw, 46rem);
+  width: 100%;
+  max-height: 88vh;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  background: rgba(11, 16, 33, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: var(--text-primary);
+  padding: 0;
+  box-shadow:
+    0 25px 70px -15px rgba(0, 0, 0, 0.85),
+    0 0 40px -12px rgba(0, 242, 254, 0.25);
+  overscroll-behavior: contain;
+}
+
+dialog.case-study-dialog::backdrop {
+  background: rgba(4, 7, 17, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+/* Accesibilidad: Modo de Contraste Alto (Windows Forced Colors) */
+@media (forced-colors: active) {
+  .glass-card,
+  dialog.case-study-dialog {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+
+  .btn-primary-glow {
+    border: 2px solid ButtonText;
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .text-gradient-cyber {
+    color: Highlight;
+    background: none;
+  }
+}
+
+/* Accesibilidad obligatoria: prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  #scroll-progress {
+    display: none;
+  }
+
+  .reveal-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3,
+  .status-pulse {
+    animation: none;
+  }
+
+  .glass-card,
+  .glass-card::before,
+  .btn-primary-glow,
+  .nav-link-underline::after,
+  .magnetic-arrow,
+  .project-thumb {
+    transition: none;
+  }
+}
