@@ -12,8 +12,57 @@ export function initProjectModal() {
   const modalArch = document.getElementById('modal-project-arch');
   const modalHighlights = document.getElementById('modal-project-highlights');
   const modalGithubLink = document.getElementById('modal-github-link');
+  const modalGallery = document.getElementById('modal-gallery');
+  const modalGalleryImage = document.getElementById('modal-gallery-image');
+  const modalGalleryCaption = document.getElementById('modal-gallery-caption');
+  const modalGalleryTabs = document.getElementById('modal-gallery-tabs');
 
   if (!projectModal) return;
+
+  const renderGallery = (screenshots, projectTitle) => {
+    if (!modalGallery || !modalGalleryImage || !modalGalleryTabs) return;
+
+    if (!Array.isArray(screenshots) || !screenshots.length) {
+      modalGallery.hidden = true;
+      modalGalleryTabs.replaceChildren();
+      return;
+    }
+
+    const selectSlide = (index) => {
+      const slide = screenshots[index];
+      if (!slide) return;
+
+      modalGalleryImage.src = slide.src;
+      modalGalleryImage.alt = `${projectTitle} — ${slide.label}`;
+      if (modalGalleryCaption) {
+        modalGalleryCaption.textContent = slide.caption || slide.label;
+      }
+
+      Array.from(modalGalleryTabs.children).forEach((tabBtn, tabIdx) => {
+        const active = tabIdx === index;
+        tabBtn.setAttribute('aria-pressed', String(active));
+        tabBtn.classList.toggle('bg-[#00f2fe]/15', active);
+        tabBtn.classList.toggle('border-[#00f2fe]/60', active);
+        tabBtn.classList.toggle('text-[#00f2fe]', active);
+        tabBtn.classList.toggle('bg-white/5', !active);
+        tabBtn.classList.toggle('border-white/10', !active);
+        tabBtn.classList.toggle('text-slate-300', !active);
+      });
+    };
+
+    modalGalleryTabs.replaceChildren();
+    screenshots.forEach((slide, idx) => {
+      const tabBtn = document.createElement('button');
+      tabBtn.type = 'button';
+      tabBtn.className = 'px-2.5 py-1 rounded-lg border font-mono text-[11px] transition-colors';
+      tabBtn.textContent = slide.label;
+      tabBtn.addEventListener('click', () => selectSlide(idx));
+      modalGalleryTabs.appendChild(tabBtn);
+    });
+
+    modalGallery.hidden = false;
+    selectSlide(0);
+  };
 
   document.querySelectorAll('.project-open-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -26,6 +75,7 @@ export function initProjectModal() {
       modalSummary.textContent = study.summary;
       modalArch.textContent = study.arch;
       modalGithubLink.setAttribute('href', study.repoUrl);
+      renderGallery(study.screenshots, study.title);
 
       modalHighlights.replaceChildren();
       study.highlights.forEach((item) => {

@@ -42,6 +42,7 @@
             cyber: {
               cyan: '#00f2fe',
               blue: '#4facfe',
+              signal: '#ff2e4c',
             }
           },
           fontFamily: {
@@ -54,7 +55,7 @@
     };
   </script>
 </head>
-<body class="bg-[#070913] text-slate-100 selection:bg-[#00f2fe]/30 selection:text-white relative">
+<body class="bg-transparent text-slate-100 selection:bg-[#00f2fe]/30 selection:text-white relative">
 
   <!-- Barra de progreso de lectura superior (decorativa) -->
   <div id="scroll-progress" aria-hidden="true"></div>
@@ -62,12 +63,13 @@
   <!-- Skip link para accesibilidad de teclado -->
   <a href="#inicio" class="skip-link">Saltar al contenido principal</a>
 
-  <!-- Capas decorativas de fondo (no interactivas ni leídas por lectores de pantalla) -->
-  <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden="true">
+  <!-- Capas decorativas de fondo + partículas interactivas debajo de todos los banners -->
+  <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
     <div class="absolute inset-0 bg-tech-grid"></div>
+    <canvas id="bg-particles" class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
     <div class="absolute -top-36 -left-32 w-[34rem] h-[34rem] rounded-full bg-[#00f2fe]/10 blur-[130px]"></div>
-    <div class="absolute top-1/3 -right-40 w-[36rem] h-[36rem] rounded-full bg-[#4facfe]/10 blur-[140px]"></div>
-    <div class="absolute bottom-0 left-1/4 w-[28rem] h-[28rem] rounded-full bg-cyan-500/5 blur-[120px]"></div>
+    <div class="absolute top-1/3 -right-40 w-[36rem] h-[36rem] rounded-full bg-[#ff2e4c]/10 blur-[145px]"></div>
+    <div class="absolute bottom-0 left-1/4 w-[28rem] h-[28rem] rounded-full bg-[#4facfe]/10 blur-[125px]"></div>
   </div>
 
   <!-- =====================================================================
@@ -75,25 +77,29 @@
   ====================================================================== -->
   <header class="fixed top-0 inset-x-0 z-50 border-b border-white/10 bg-[#070913]/75 backdrop-blur-xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-[72px] flex items-center justify-between gap-4">
-      <!-- Logo Trébol Moderno SVG + Trebor -->
+      <!-- Logo Trébol Moderno SVG (sin caja) + Trebor -->
       <a href="#inicio" class="group inline-flex items-center gap-2.5 shrink-0 focus-visible:rounded-lg">
-        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-[#00f2fe]/15 to-[#4facfe]/10 border border-[#00f2fe]/40 shadow-[0_0_20px_-6px_rgba(0,242,254,0.45)] group-hover:border-[#00f2fe] group-hover:scale-105 transition-all duration-200">
-          <!-- Trébol geométrico moderno con circuito interno -->
-          <svg aria-hidden="true" viewBox="0 0 32 32" class="w-5 h-5">
-            <defs>
-              <linearGradient id="trebol-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00f2fe"/>
-                <stop offset="100%" stop-color="#4facfe"/>
-              </linearGradient>
-            </defs>
-            <path d="M16 14C12.5 11.5 11.5 6 16 4.5C20.5 6 19.5 11.5 16 14ZM14 16.5C10 19.5 4.5 18 4.5 13.5C6 9.5 11.5 11 14 16.5ZM18 16.5C22 19.5 27.5 18 27.5 13.5C26 9.5 20.5 11 18 16.5Z"
-                  fill="url(#trebol-grad)" fill-opacity="0.22"
-                  stroke="url(#trebol-grad)" stroke-width="1.75" stroke-linejoin="round"/>
-            <path d="M16 13V9M13.2 15.6L9.5 14M18.8 15.6L22.5 14" stroke="#a5f3fc" stroke-width="1.1" stroke-linecap="round" stroke-opacity="0.85"/>
-            <path d="M16 17.5Q16 23.5 19.5 27.5" fill="none" stroke="url(#trebol-grad)" stroke-width="1.9" stroke-linecap="round"/>
-            <circle cx="16" cy="16" r="1.8" fill="#00f2fe"/>
-          </svg>
-        </span>
+        <!-- Trébol geométrico moderno sin contenedor -->
+        <svg aria-hidden="true" viewBox="0 0 32 32" class="w-8 h-8 shrink-0 drop-shadow-[0_0_10px_rgba(0,242,254,0.45)] group-hover:scale-110 transition-transform duration-200">
+          <defs>
+            <linearGradient id="trebol-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00f2fe"/>
+              <stop offset="60%" stop-color="#4facfe"/>
+              <stop offset="100%" stop-color="#ff2e4c"/>
+            </linearGradient>
+          </defs>
+          <!-- Tres hojas del trébol con muesca orgánica -->
+          <path d="M16 14.5C12.2 12.2 10.5 6.8 14 4.8C15.2 4.1 16 5.2 16 6.2C16 5.2 16.8 4.1 18 4.8C21.5 6.8 19.8 12.2 16 14.5Z"
+                fill="#00f2fe" fill-opacity="0.22" stroke="#00f2fe" stroke-width="1.75" stroke-linejoin="round"/>
+          <path d="M14.6 15.8C12.2 19.6 6.8 21.3 4.8 17.8C4.1 16.6 5.2 15.8 6.2 15.8C5.2 15.8 4.1 15 4.8 13.8C6.8 10.3 12.2 12 14.6 15.8Z"
+                fill="#4facfe" fill-opacity="0.22" stroke="#4facfe" stroke-width="1.75" stroke-linejoin="round"/>
+          <path d="M17.4 15.8C19.8 19.6 25.2 21.3 27.2 17.8C27.9 16.6 26.8 15.8 25.8 15.8C26.8 15.8 27.9 15 27.2 13.8C25.2 10.3 19.8 12 17.4 15.8Z"
+                fill="#00f2fe" fill-opacity="0.22" stroke="url(#trebol-grad)" stroke-width="1.75" stroke-linejoin="round"/>
+          <!-- Tallo curvo y trazos internos de circuito -->
+          <path d="M16 16.8C16 21.5 16.5 25.2 20 28.2" fill="none" stroke="url(#trebol-grad)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 13.2V9.2M13.5 15.8H9.5M18.5 15.8H22.5" stroke="#a5f3fc" stroke-width="1.15" stroke-linecap="round" stroke-opacity="0.85"/>
+          <circle cx="16" cy="15.8" r="1.9" fill="#00f2fe"/>
+        </svg>
         <span class="font-display font-bold text-lg sm:text-xl tracking-tight text-white group-hover:text-[#00f2fe] transition-colors">
           trebor<span class="text-[#00f2fe]">.dev</span>
         </span>
@@ -181,27 +187,63 @@
     </div>
   </header>
 
-  <main id="main-content">
+  <main id="main-content" class="relative z-10">
+
+    <!-- Sprite SVG reutilizable: Pixel Avatar de Robert (Trebor) inspirado en Cajathón -->
+    <svg class="hidden" aria-hidden="true">
+      <symbol id="pixel-avatar-trebor" viewBox="0 0 16 16" shape-rendering="crispEdges">
+        <!-- Diadema headset -->
+        <rect x="4" y="0" width="8" height="1" fill="#ff2e4c"/>
+        <rect x="5" y="0" width="6" height="1" fill="#ff6b81"/>
+        <rect x="3" y="1" width="1" height="3" fill="#ff2e4c"/>
+        <rect x="12" y="1" width="1" height="3" fill="#ff2e4c"/>
+        <!-- Cabello oscuro con textura -->
+        <rect x="5" y="1" width="6" height="1" fill="#111827"/>
+        <rect x="4" y="2" width="8" height="2" fill="#0f172a"/>
+        <rect x="5" y="2" width="3" height="1" fill="#1e293b"/>
+        <rect x="4" y="3" width="1" height="1" fill="#0f172a"/>
+        <!-- Rostro y sombra lateral -->
+        <rect x="4" y="4" width="8" height="5" fill="#d99b72"/>
+        <rect x="4" y="4" width="1" height="4" fill="#c4855d"/>
+        <rect x="11" y="4" width="1" height="4" fill="#c4855d"/>
+        <!-- Audífonos laterales con acento cian -->
+        <rect x="2" y="4" width="2" height="4" fill="#ff2e4c"/>
+        <rect x="12" y="4" width="2" height="4" fill="#ff2e4c"/>
+        <rect x="2" y="5" width="1" height="2" fill="#00f2fe"/>
+        <rect x="13" y="5" width="1" height="2" fill="#00f2fe"/>
+        <!-- Ojos expresivos -->
+        <rect x="5" y="5" width="1" height="2" fill="#0f172a"/>
+        <rect x="10" y="5" width="1" height="2" fill="#0f172a"/>
+        <rect x="5" y="5" width="1" height="1" fill="#ffffff" fill-opacity="0.4"/>
+        <rect x="10" y="5" width="1" height="1" fill="#ffffff" fill-opacity="0.4"/>
+        <!-- Bigote, sonrisa y barba -->
+        <rect x="6" y="7" width="4" height="1" fill="#111827"/>
+        <rect x="7" y="8" width="2" height="1" fill="#111827"/>
+        <!-- Cuello -->
+        <rect x="7" y="9" width="2" height="1" fill="#c4855d"/>
+        <!-- Hoodie blanco dev con cuello e icono < > -->
+        <rect x="3" y="10" width="10" height="6" fill="#f8fafc"/>
+        <rect x="3" y="10" width="1" height="6" fill="#cbd5e1"/>
+        <rect x="12" y="10" width="1" height="6" fill="#cbd5e1"/>
+        <rect x="6" y="10" width="4" height="1" fill="#e2e8f0"/>
+        <!-- Código < > en el pecho -->
+        <rect x="6" y="12" width="1" height="1" fill="#ff2e4c"/>
+        <rect x="5" y="13" width="1" height="1" fill="#ff2e4c"/>
+        <rect x="6" y="14" width="1" height="1" fill="#ff2e4c"/>
+        <rect x="9" y="12" width="1" height="1" fill="#00f2fe"/>
+        <rect x="10" y="13" width="1" height="1" fill="#00f2fe"/>
+        <rect x="9" y="14" width="1" height="1" fill="#00f2fe"/>
+      </symbol>
+    </svg>
 
     <!-- ===================================================================
          B. HERO SECTION (IMPACTO INICIAL)
     ==================================================================== -->
-    <section id="inicio" tabindex="-1" data-particles-container data-particles-density="0.75" class="relative overflow-hidden pt-28 pb-16 sm:pt-36 sm:pb-24 lg:pt-40 lg:pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="inicio" tabindex="-1" class="relative pt-28 pb-16 sm:pt-36 sm:pb-24 lg:pt-40 lg:pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
 
         <!-- Columna Izquierda: Copy Principal -->
         <div class="lg:col-span-7 space-y-6">
-          <!-- Badge superior con indicador vectorial (sin emojis) -->
-          <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-            <span class="relative flex h-2.5 w-2.5" aria-hidden="true">
-              <span class="status-pulse animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
-            </span>
-            <span class="text-xs sm:text-sm font-mono text-emerald-300 tracking-wide">
-              Disponible para proyectos y oportunidades Tech
-            </span>
-          </div>
-
           <!-- Título principal y subtítulo dinámico -->
           <div class="space-y-3">
             <h1 class="font-display font-bold text-4xl sm:text-5xl lg:text-6xl tracking-tight text-white leading-[1.08]">
@@ -211,7 +253,7 @@
               Data Engineer &amp; Full-Stack Software Developer
             </p>
             <div class="flex items-center gap-2 font-mono text-xs sm:text-sm text-slate-400 pt-1">
-              <span class="text-[#00f2fe]" aria-hidden="true">&gt;_</span>
+              <span class="text-[#ff6b81]" aria-hidden="true">&gt;_</span>
               <span id="dynamic-role-line">Arquitecturas Medallón · Databricks &amp; PySpark</span>
             </div>
           </div>
@@ -222,7 +264,7 @@
           </p>
 
           <!-- Botones CTA con microinteracciones -->
-          <div class="flex flex-wrap items-center gap-4 pt-2">
+          <div class="flex flex-wrap items-center gap-4 pt-1">
             <a href="#proyectos"
                class="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm sm:text-base btn-primary-glow hover:-translate-y-1">
               <span>Explorar Casos de Estudio</span>
@@ -234,23 +276,46 @@
             <a href="https://github.com/robertpid"
                target="_blank"
                rel="noopener noreferrer"
-               class="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm sm:text-base bg-white/5 border border-white/15 text-white backdrop-blur-md hover:border-[#00f2fe]/50 hover:bg-white/10 hover:-translate-y-1 transition-all duration-200">
-              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4 text-[#00f2fe]" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+               class="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm sm:text-base bg-white/5 border border-white/15 text-white backdrop-blur-md hover:border-[#ff2e4c]/60 hover:bg-[#ff2e4c]/10 hover:-translate-y-1 transition-all duration-200">
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4 text-[#ff6b81] group-hover:text-[#00f2fe] transition-colors" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
               </svg>
               <span>Ver GitHub</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#00f2fe] transition-colors" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <svg aria-hidden="true" viewBox="0 0 16 16" class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#ff6b81] transition-colors" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4.5 11.5L11.5 4.5M6 4.5h5.5V10"/>
               </svg>
             </a>
+          </div>
+
+          <!-- Tira de Metadatos Swiss-Tech con barra tricolor -->
+          <div class="rounded-xl glass-card overflow-hidden max-w-2xl">
+            <div class="tricolor-bar" aria-hidden="true"></div>
+            <dl class="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/10">
+              <div class="p-3 sm:px-4">
+                <dt class="font-mono text-[10px] uppercase tracking-wider text-slate-400">Rol</dt>
+                <dd class="mt-0.5 font-display font-semibold text-xs sm:text-sm text-white">Desarrollo tech</dd>
+              </div>
+              <div class="p-3 sm:px-4">
+                <dt class="font-mono text-[10px] uppercase tracking-wider text-slate-400">Condición</dt>
+                <dd class="mt-0.5 font-display font-semibold text-xs sm:text-sm text-[#00f2fe]">Profesional</dd>
+              </div>
+              <div class="p-3 sm:px-4">
+                <dt class="font-mono text-[10px] uppercase tracking-wider text-slate-400">Carrera</dt>
+                <dd class="mt-0.5 font-display font-semibold text-xs sm:text-sm text-white">Ing. Sistemas</dd>
+              </div>
+              <div class="p-3 sm:px-4">
+                <dt class="font-mono text-[10px] uppercase tracking-wider text-slate-400">Ciudad</dt>
+                <dd class="mt-0.5 font-display font-semibold text-xs sm:text-sm text-[#ff8fa3]">Lima, Perú</dd>
+              </div>
+            </dl>
           </div>
         </div>
 
         <!-- Columna Derecha: Contenedor HUD Glassmorphic con Foto Profesional + Tarjetas Flotantes -->
         <div class="lg:col-span-5 relative flex justify-center lg:justify-end">
           <div class="relative w-full max-w-[380px] sm:max-w-[410px]">
-            <!-- Halo luminoso detrás del marco -->
-            <div class="absolute -inset-2 rounded-[2.25rem] bg-gradient-to-tr from-[#00f2fe]/35 via-[#4facfe]/20 to-transparent blur-2xl opacity-80 pointer-events-none" aria-hidden="true"></div>
+            <!-- Halo luminoso tricolor detrás del marco -->
+            <div class="absolute -inset-2 rounded-[2.25rem] bg-gradient-to-tr from-[#00f2fe]/35 via-[#4facfe]/20 to-[#ff2e4c]/30 blur-2xl opacity-85 pointer-events-none" aria-hidden="true"></div>
 
             <!-- Marco Glassmorphic Principal con esquinas HUD -->
             <div class="relative rounded-[1.75rem] p-3 glass-card border-[#00f2fe]/30">
@@ -269,32 +334,143 @@
               </svg>
 
               <div class="relative aspect-[4/5] w-full overflow-hidden rounded-[1.25rem] bg-gradient-to-b from-slate-800/80 to-[#070913] border border-white/10">
-                <img
-                  id="hero-portrait"
-                  src="./assets/robert-perez.jpg"
-                  alt="Fotografía profesional de Robert Alejandro Pérez Soto (Trebor), Data Engineer y Full-Stack Software Developer"
-                  width="400"
-                  height="500"
-                  fetchpriority="high"
-                  loading="eager"
-                  class="w-full h-full object-cover object-top"
-                >
-
-                <!-- Fallback visual si el recurso falla en cargarse -->
-                <div id="hero-portrait-fallback" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#0b1224] via-[#070913] to-[#0c1a30]">
-                  <div class="w-28 h-28 rounded-full border-2 border-[#00f2fe]/50 bg-[#00f2fe]/10 flex items-center justify-center mb-4">
-                    <span class="font-display font-bold text-3xl text-gradient-cyber">RP</span>
-                  </div>
-                  <p class="font-display font-semibold text-white text-lg">Robert Pérez (Trebor)</p>
-                  <p class="font-mono text-xs text-[#00f2fe] mt-1">trebor.dev · Lima, Perú</p>
+                <!-- Selector HUD Foto <-> Pixel ID -->
+                <div role="group" aria-label="Modo de visualización del retrato" class="absolute top-3 right-3 z-20 inline-flex items-center gap-1 p-1 rounded-lg bg-[#070913]/85 border border-white/15 backdrop-blur-md">
+                  <button type="button"
+                          data-hero-mode-btn="photo"
+                          aria-pressed="true"
+                          class="px-2.5 py-1 rounded-md text-[10px] font-mono uppercase tracking-wider border border-[#00f2fe]/50 bg-[#00f2fe]/20 text-[#00f2fe] transition-colors">
+                    Foto
+                  </button>
+                  <button type="button"
+                          data-hero-mode-btn="pixel"
+                          aria-pressed="false"
+                          class="px-2.5 py-1 rounded-md text-[10px] font-mono uppercase tracking-wider border border-white/10 bg-white/5 text-slate-300 hover:text-white transition-colors">
+                    Pixel ID
+                  </button>
                 </div>
 
-                <!-- Tinte sutil cian y viñeta inferior para integrar el retrato al modo oscuro -->
-                <div class="absolute inset-0 bg-gradient-to-tr from-[#00f2fe]/10 via-transparent to-[#4facfe]/10 mix-blend-overlay pointer-events-none" aria-hidden="true"></div>
-                <div class="absolute inset-x-0 bottom-0 p-4 pt-12 bg-gradient-to-t from-[#070913] via-[#070913]/85 to-transparent">
-                  <div class="flex items-center justify-between text-[11px] font-mono">
-                    <span class="text-slate-200 tracking-wide">SYS_ID: TREBOR</span>
-                    <span class="text-[#00f2fe]">@robertpid</span>
+                <!-- Vista 1: Fotografía Profesional -->
+                <div id="hero-photo-stage" class="relative w-full h-full">
+                  <img
+                    id="hero-portrait"
+                    src="./assets/robert-perez.jpg"
+                    alt="Fotografía profesional de Robert Alejandro Pérez Soto (Trebor), Data Engineer y Full-Stack Software Developer"
+                    width="400"
+                    height="500"
+                    fetchpriority="high"
+                    loading="eager"
+                    class="w-full h-full object-cover object-top"
+                  >
+
+                  <!-- Fallback visual si el recurso falla en cargarse -->
+                  <div id="hero-portrait-fallback" class="hidden absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-[#0b1224] via-[#070913] to-[#0c1a30]">
+                    <div class="w-28 h-28 rounded-full border-2 border-[#00f2fe]/50 bg-[#00f2fe]/10 flex items-center justify-center mb-4">
+                      <span class="font-display font-bold text-3xl text-gradient-cyber">RP</span>
+                    </div>
+                    <p class="font-display font-semibold text-white text-lg">Robert Pérez (Trebor)</p>
+                    <p class="font-mono text-xs text-[#00f2fe] mt-1">trebor.dev · Lima, Perú</p>
+                  </div>
+
+                  <!-- Tinte sutil cian y viñeta inferior para integrar el retrato al modo oscuro -->
+                  <div class="absolute inset-0 bg-gradient-to-tr from-[#00f2fe]/10 via-transparent to-[#4facfe]/10 mix-blend-overlay pointer-events-none" aria-hidden="true"></div>
+                  <div class="absolute inset-x-0 bottom-0 p-4 pt-12 bg-gradient-to-t from-[#070913] via-[#070913]/85 to-transparent">
+                    <div class="flex items-center justify-between text-[11px] font-mono">
+                      <span class="text-slate-200 tracking-wide">SYS_ID: TREBOR</span>
+                      <span class="text-[#00f2fe]">@robertpid</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Vista 2: Credencial interactiva Pixel ID Trebor -->
+                <div id="hero-pixel-stage" hidden class="relative w-full h-full flex flex-col justify-between bg-[#090d1b]">
+                  <div class="pixel-banner-grid h-20 w-full border-b border-[#ff2e4c]/30 relative z-0 shrink-0">
+                    <div class="tricolor-bar" aria-hidden="true"></div>
+                  </div>
+
+                  <div class="relative z-10 px-5 pb-6 -mt-10 flex-1 flex flex-col items-center text-center justify-between gap-2.5">
+                    <div class="flex flex-col items-center">
+                      <div class="relative w-20 h-20 rounded-xl bg-[#070913] border-2 border-[#00f2fe]/65 shadow-[0_0_28px_-4px_rgba(0,242,254,0.45)] p-1.5 flex items-center justify-center overflow-hidden">
+                        <svg aria-hidden="true" viewBox="0 0 16 16" class="w-full h-full relative z-10">
+                          <use href="#pixel-avatar-trebor"/>
+                        </svg>
+                        <span class="hud-scan-line z-20" aria-hidden="true"></span>
+                      </div>
+                      <p class="mt-2.5 font-display font-bold text-lg sm:text-xl text-white leading-tight">Robert (Trebor)</p>
+                      <p id="pixel-spec-subtitle" class="font-mono text-[11px] text-[#ff8fa3] mt-0.5">Data Engineer · Medallón &amp; Lakehouse</p>
+
+                      <!-- Selector interactivo de especialidad -->
+                      <div role="group" aria-label="Especialidad activa" class="mt-2 inline-flex items-center gap-1.5">
+                        <button type="button" data-pixel-spec="data" aria-pressed="true"
+                                class="px-2 py-0.5 rounded-md border border-[#ff2e4c]/60 bg-[#ff2e4c]/20 font-mono text-[10px] text-white transition-colors">
+                          Data
+                        </button>
+                        <button type="button" data-pixel-spec="erp" aria-pressed="false"
+                                class="px-2 py-0.5 rounded-md border border-white/10 bg-white/5 font-mono text-[10px] text-slate-400 hover:text-white transition-colors">
+                          ERP
+                        </button>
+                        <button type="button" data-pixel-spec="ia" aria-pressed="false"
+                                class="px-2 py-0.5 rounded-md border border-white/10 bg-white/5 font-mono text-[10px] text-slate-400 hover:text-white transition-colors">
+                          IA
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="w-full rounded-xl bg-[#070913]/85 border border-white/10 p-3 space-y-2 text-left">
+                      <div class="flex items-center justify-between text-[11px] font-mono">
+                        <span id="pixel-metric-primary" class="text-slate-200">PySpark &amp; Databricks</span>
+                        <span class="flex items-center gap-1.5 text-[#00f2fe]">
+                          <span class="signal-meter" aria-hidden="true">
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                          </span>
+                          5/5
+                        </span>
+                      </div>
+                      <div class="flex items-center justify-between text-[11px] font-mono">
+                        <span id="pixel-metric-secondary" class="text-slate-200">Azure SQL &amp; Polars</span>
+                        <span class="flex items-center gap-1.5 text-[#00f2fe]">
+                          <span class="signal-meter" aria-hidden="true">
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                            <span class="signal-bar is-active"></span>
+                          </span>
+                          5/5
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Código de barras vectorial TREBOR + accesos rápidos tipo consola (alineado a la derecha) -->
+                    <div class="w-full pt-2 border-t border-white/10 flex flex-col items-end gap-1.5">
+                      <span id="pixel-signature-code" class="font-mono text-[9px] text-slate-400 tracking-wider">TREBOR // PIPELINE_READY</span>
+                      <div class="flex items-center justify-end gap-2">
+                        <svg aria-hidden="true" viewBox="0 0 44 16" class="w-9 h-3.5 shrink-0">
+                          <rect x="0" y="1" width="2" height="14" fill="#00f2fe"/>
+                          <rect x="4" y="1" width="1" height="14" fill="#4facfe"/>
+                          <rect x="7" y="1" width="3" height="14" fill="#00f2fe"/>
+                          <rect x="12" y="1" width="1" height="14" fill="#ff2e4c"/>
+                          <rect x="15" y="1" width="2" height="14" fill="#4facfe"/>
+                          <rect x="19" y="1" width="1" height="14" fill="#00f2fe"/>
+                          <rect x="22" y="1" width="3" height="14" fill="#ff2e4c"/>
+                          <rect x="27" y="1" width="1" height="14" fill="#00f2fe"/>
+                          <rect x="30" y="1" width="2" height="14" fill="#4facfe"/>
+                          <rect x="34" y="1" width="2" height="14" fill="#00f2fe"/>
+                          <rect x="38" y="1" width="1" height="14" fill="#ff2e4c"/>
+                          <rect x="41" y="1" width="3" height="14" fill="#00f2fe"/>
+                        </svg>
+                        <a href="#stack" class="px-2 py-0.5 rounded bg-white/5 border border-white/10 font-mono text-[10px] text-slate-300 hover:text-[#00f2fe] hover:border-[#00f2fe]/50 transition-colors">
+                          &gt;_ stack()
+                        </a>
+                        <a href="#contacto" class="px-2 py-0.5 rounded bg-[#00f2fe]/15 border border-[#00f2fe]/45 font-mono text-[10px] text-[#00f2fe] hover:bg-[#ff2e4c]/20 hover:border-[#ff2e4c]/60 hover:text-white transition-colors">
+                          &gt;_ ping()
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -355,61 +531,125 @@
          C. FRANJA DE MÉTRICAS DE IMPACTO
     ==================================================================== -->
     <section aria-label="Métricas de impacto profesional" class="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16 sm:pb-24">
-      <div class="reveal-on-scroll grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        <div data-particles-container data-particles-density="0.9" class="glass-card rounded-2xl p-6 flex flex-col justify-between">
-          <div class="flex items-start justify-between gap-2">
-            <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">34+</p>
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-[#00f2fe]/60" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 12l2 2 4-4"/>
-              <path d="M12 3l8 3.5v5.5c0 4.5-3.4 8.2-8 9.5-4.6-1.3-8-5-8-9.5V6.5L12 3z"/>
-            </svg>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div class="tricolor-bar" aria-hidden="true"></div>
+          <div class="p-6 flex-1 flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-slate-400">
+                <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+                <span>QA_PROD // 01</span>
+              </span>
+              <span class="signal-meter" aria-hidden="true">
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between gap-2">
+              <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">34+</p>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-[#00f2fe]/70" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M12 3l8 3.5v5.5c0 4.5-3.4 8.2-8 9.5-4.6-1.3-8-5-8-9.5V6.5L12 3z"/>
+              </svg>
+            </div>
+            <p class="text-sm text-slate-300 leading-snug">
+              Pruebas Unitarias Automatizadas en Producción
+            </p>
           </div>
-          <p class="mt-2 text-sm text-slate-300 leading-snug">
-            Pruebas Unitarias Automatizadas en Producción
-          </p>
         </div>
 
-        <div data-particles-container data-particles-density="0.9" class="glass-card rounded-2xl p-6 flex flex-col justify-between">
-          <div class="flex items-start justify-between gap-2">
-            <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">800+</p>
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-[#4facfe]/60" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="6" cy="12" r="2.5"/>
-              <circle cx="18" cy="6" r="2.5"/>
-              <circle cx="18" cy="18" r="2.5"/>
-              <path d="M8.3 11l7.4-4M8.3 13l7.4 4"/>
-            </svg>
+        <div class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div class="tricolor-bar" aria-hidden="true"></div>
+          <div class="p-6 flex-1 flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-slate-400">
+                <span class="w-2 h-2 rounded-[2px] bg-[#00f2fe]" aria-hidden="true"></span>
+                <span>B2B_GRAPH // 02</span>
+              </span>
+              <span class="signal-meter" aria-hidden="true">
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between gap-2">
+              <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">800+</p>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-[#ff6b81]/75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="6" cy="12" r="2.5"/>
+                <circle cx="18" cy="6" r="2.5"/>
+                <circle cx="18" cy="18" r="2.5"/>
+                <path d="M8.3 11l7.4-4M8.3 13l7.4 4"/>
+              </svg>
+            </div>
+            <p class="text-sm text-slate-300 leading-snug">
+              Entidades Corporativas Gestionadas en Sistemas B2B
+            </p>
           </div>
-          <p class="mt-2 text-sm text-slate-300 leading-snug">
-            Entidades Corporativas Gestionadas en Sistemas B2B
-          </p>
         </div>
 
-        <div data-particles-container data-particles-density="0.9" class="glass-card rounded-2xl p-6 flex flex-col justify-between">
-          <div class="flex items-start justify-between gap-2">
-            <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">5+</p>
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-cyan-300/60" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="4" width="6" height="6" rx="1.5"/>
-              <rect x="14" y="14" width="6" height="6" rx="1.5"/>
-              <path d="M10 7h4a3 3 0 0 1 3 3v4"/>
-            </svg>
+        <div class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div class="tricolor-bar" aria-hidden="true"></div>
+          <div class="p-6 flex-1 flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-slate-400">
+                <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+                <span>END_TO_END // 03</span>
+              </span>
+              <span class="signal-meter" aria-hidden="true">
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between gap-2">
+              <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">5+</p>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-[#4facfe]/75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="6" height="6" rx="1.5"/>
+                <rect x="14" y="14" width="6" height="6" rx="1.5"/>
+                <path d="M10 7h4a3 3 0 0 1 3 3v4"/>
+              </svg>
+            </div>
+            <p class="text-sm text-slate-300 leading-snug">
+              Soluciones End-to-End (ERP, AML Data Pipelines, IA, IoT)
+            </p>
           </div>
-          <p class="mt-2 text-sm text-slate-300 leading-snug">
-            Soluciones End-to-End (ERP, AML Data Pipelines, IA, IoT)
-          </p>
         </div>
 
-        <div data-particles-container data-particles-density="0.9" class="glass-card rounded-2xl p-6 flex flex-col justify-between">
-          <div class="flex items-start justify-between gap-2">
-            <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">B2</p>
-            <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-emerald-300/60" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/>
-              <ellipse cx="12" cy="12" rx="4" ry="9"/>
-              <path d="M3.5 9h17M3.5 15h17"/>
-            </svg>
+        <div class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div class="tricolor-bar" aria-hidden="true"></div>
+          <div class="p-6 flex-1 flex flex-col justify-between gap-3">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-slate-400">
+                <span class="w-2 h-2 rounded-[2px] bg-emerald-400" aria-hidden="true"></span>
+                <span>ENGLISH // 04</span>
+              </span>
+              <span class="signal-meter" aria-hidden="true">
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar"></span>
+              </span>
+            </div>
+            <div class="flex items-baseline justify-between gap-2">
+              <p class="font-display font-bold text-3xl sm:text-4xl text-gradient-cyber">B2</p>
+              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5 text-emerald-300/75" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <ellipse cx="12" cy="12" rx="4" ry="9"/>
+                <path d="M3.5 9h17M3.5 15h17"/>
+              </svg>
+            </div>
+            <p class="text-sm text-slate-300 leading-snug">
+              Certificación de Inglés Técnico (EF SET Upper Intermediate)
+            </p>
           </div>
-          <p class="mt-2 text-sm text-slate-300 leading-snug">
-            Certificación de Inglés Técnico (EF SET Upper Intermediate)
-          </p>
         </div>
       </div>
     </section>
@@ -419,8 +659,9 @@
     ==================================================================== -->
     <section id="sobre-mi" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div class="reveal-on-scroll max-w-3xl mb-12">
-        <p class="font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
-          // 01. Sobre Mí &amp; Diferencial
+        <p class="inline-flex items-center gap-2 font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
+          <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+          <span>// 01. Sobre Mí &amp; Diferencial</span>
         </p>
         <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight leading-tight">
           Más allá del código: Ingeniería con visión de negocio y terreno
@@ -429,9 +670,16 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Pilar 1 -->
-        <article data-particles-container class="reveal-on-scroll glass-card rounded-2xl p-6 sm:p-7 flex flex-col gap-4">
-          <div class="flex items-center justify-between">
-            <span class="w-11 h-11 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/30 flex items-center justify-center text-[#00f2fe]">
+        <article class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="pixel-banner-grid-subtle px-6 py-3 border-b border-white/10 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 font-mono text-[11px] text-slate-300">
+              <span class="px-1.5 py-0.5 rounded bg-white/10 text-[#00f2fe]">1</span>
+              <span>PILAR_01</span>
+            </span>
+            <span class="font-mono text-[10px] text-[#00f2fe]">DATA_ARCH</span>
+          </div>
+          <div class="p-6 sm:p-7 flex flex-col gap-4">
+            <span class="w-11 h-11 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/35 flex items-center justify-center text-[#00f2fe]">
               <!-- SVG custom: Arquitectura de Datos & Capas -->
               <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 3l8 4-8 4-8-4 8-4z"/>
@@ -439,40 +687,52 @@
                 <path d="M4 17l8 4 8-4"/>
               </svg>
             </span>
-            <span class="font-mono text-xs text-slate-500">PILAR_01</span>
+            <h3 class="font-display font-bold text-xl text-white">
+              Arquitecto de Datos y Software
+            </h3>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Especializado en construir desde cero. No solo analizo datos; diseño la infraestructura que los captura, procesa y protege. Combino el poder del procesamiento distribuido (Databricks, PySpark, Azure SQL) con el desarrollo de software robusto (FastAPI, Spring Boot, PostgreSQL, Docker).
+            </p>
           </div>
-          <h3 class="font-display font-bold text-xl text-white">
-            Arquitecto de Datos y Software
-          </h3>
-          <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Especializado en construir desde cero. No solo analizo datos; diseño la infraestructura que los captura, procesa y protege. Combino el poder del procesamiento distribuido (Databricks, PySpark, Azure SQL) con el desarrollo de software robusto (FastAPI, Spring Boot, PostgreSQL, Docker).
-          </p>
         </article>
 
         <!-- Pilar 2 -->
-        <article data-particles-container class="reveal-on-scroll glass-card rounded-2xl p-6 sm:p-7 flex flex-col gap-4">
-          <div class="flex items-center justify-between">
-            <span class="w-11 h-11 rounded-xl bg-[#4facfe]/10 border border-[#4facfe]/30 flex items-center justify-center text-[#4facfe]">
+        <article class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="pixel-banner-grid-subtle px-6 py-3 border-b border-white/10 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 font-mono text-[11px] text-slate-300">
+              <span class="px-1.5 py-0.5 rounded bg-white/10 text-[#4facfe]">2</span>
+              <span>PILAR_02</span>
+            </span>
+            <span class="font-mono text-[10px] text-[#4facfe]">B2B_LEAD</span>
+          </div>
+          <div class="p-6 sm:p-7 flex flex-col gap-4">
+            <span class="w-11 h-11 rounded-xl bg-[#4facfe]/10 border border-[#4facfe]/35 flex items-center justify-center text-[#4facfe]">
               <!-- SVG custom: Estrategia y Brújula B2B -->
               <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="9"/>
                 <polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5 15.5 8.5"/>
               </svg>
             </span>
-            <span class="font-mono text-xs text-slate-500">PILAR_02</span>
+            <h3 class="font-display font-bold text-xl text-white">
+              Liderazgo Real y Gestión B2B
+            </h3>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Mi experiencia liderando equipos operativos bajo presión en la industria pesquera (optimizando procesos y reduciendo mermas con tecnología propia) y mi rol en Relaciones Corporativas B2B en AIESEC Perú me permiten entender qué necesita exactamente una empresa antes de escribir la primera línea de código, comunicándome con fluidez tanto con operarios como con directivos.
+            </p>
           </div>
-          <h3 class="font-display font-bold text-xl text-white">
-            Liderazgo Real y Gestión B2B
-          </h3>
-          <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Mi experiencia liderando equipos operativos bajo presión en la industria pesquera (optimizando procesos y reduciendo mermas con tecnología propia) y mi rol en Relaciones Corporativas B2B en AIESEC Perú me permiten entender qué necesita exactamente una empresa antes de escribir la primera línea de código, comunicándome con fluidez tanto con operarios como con directivos.
-          </p>
         </article>
 
         <!-- Pilar 3 -->
-        <article data-particles-container class="reveal-on-scroll glass-card rounded-2xl p-6 sm:p-7 flex flex-col gap-4">
-          <div class="flex items-center justify-between">
-            <span class="w-11 h-11 rounded-xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300">
+        <article class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="pixel-banner-grid-subtle px-6 py-3 border-b border-white/10 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 font-mono text-[11px] text-slate-300">
+              <span class="px-1.5 py-0.5 rounded bg-white/10 text-[#ff8fa3]">3</span>
+              <span>PILAR_03</span>
+            </span>
+            <span class="font-mono text-[10px] text-[#ff6b81]">INDIE_3D_IOT</span>
+          </div>
+          <div class="p-6 sm:p-7 flex flex-col gap-4">
+            <span class="w-11 h-11 rounded-xl bg-[#ff2e4c]/15 border border-[#ff2e4c]/35 flex items-center justify-center text-[#ff8fa3]">
               <!-- SVG custom: Microchip Maker & Shaders 3D -->
               <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="6" y="6" width="12" height="12" rx="2"/>
@@ -480,14 +740,13 @@
                 <path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/>
               </svg>
             </span>
-            <span class="font-mono text-xs text-slate-500">PILAR_03</span>
+            <h3 class="font-display font-bold text-xl text-white">
+              Mente Creativa (Indie Dev &amp; Hardware Maker)
+            </h3>
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Cuando no estoy orquestando pipelines de datos o sistemas empresariales, exploro la intersección entre el arte y la ingeniería: desarrollo videojuegos de terror psicológico en 3D estilo retro PS1 en Godot Engine (creando también la música y el diseño sonoro) y construyo sistemas de telemetría con microcontroladores ESP32.
+            </p>
           </div>
-          <h3 class="font-display font-bold text-xl text-white">
-            Mente Creativa (Indie Dev &amp; Hardware Maker)
-          </h3>
-          <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Cuando no estoy orquestando pipelines de datos o sistemas empresariales, exploro la intersección entre el arte y la ingeniería: desarrollo videojuegos de terror psicológico en 3D estilo retro PS1 en Godot Engine (creando también la música y el diseño sonoro) y construyo sistemas de telemetría con microcontroladores ESP32.
-          </p>
         </article>
       </div>
     </section>
@@ -498,8 +757,9 @@
     <section id="stack" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div class="max-w-2xl">
-          <p class="font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
-            // 02. Stack Tecnológico
+          <p class="inline-flex items-center gap-2 font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
+            <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+            <span>// 02. Stack Tecnológico</span>
           </p>
           <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
             Herramientas de Producción, Cloud &amp; Creative Tech
@@ -509,7 +769,7 @@
         <!-- Filtro interactivo por categoría -->
         <div role="group" aria-label="Filtrar categorías del stack" class="inline-flex flex-wrap gap-2">
           <button type="button" data-stack-filter="all" aria-pressed="true"
-                  class="stack-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-mono border border-[#00f2fe]/50 bg-[#00f2fe]/15 text-[#00f2fe] transition-colors">
+                  class="stack-filter-btn px-3.5 py-1.5 rounded-lg text-xs font-mono border border-[#ff2e4c]/70 bg-[#ff2e4c]/15 text-white transition-colors">
             Todo el Stack
           </button>
           <button type="button" data-stack-filter="data" aria-pressed="false"
@@ -529,10 +789,26 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Categoría 1: Data Engineering & Cloud -->
-        <div data-stack-card="data" data-particles-container class="reveal-on-scroll glass-card rounded-2xl p-6 sm:p-7 flex flex-col gap-5">
-          <div class="flex items-center justify-between gap-3">
+        <div data-stack-card="data" class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="pixel-banner-grid-subtle px-6 py-3 border-b border-white/10 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 font-mono text-[11px] text-slate-300">
+              <span class="w-2 h-2 rounded-[2px] bg-[#00f2fe]" aria-hidden="true"></span>
+              <span>STACK_01 // CLOUD</span>
+            </span>
+            <span class="flex items-center gap-2 font-mono text-xs text-white">
+              <span class="signal-meter" aria-hidden="true">
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+              </span>
+              <span>5/5</span>
+            </span>
+          </div>
+          <div class="p-6 sm:p-7 flex flex-col gap-5">
             <div class="flex items-center gap-3">
-              <span class="w-10 h-10 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/30 flex items-center justify-center text-[#00f2fe]">
+              <span class="w-10 h-10 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/35 flex items-center justify-center text-[#00f2fe]">
                 <!-- SVG custom: DAG Pipeline -->
                 <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="5" height="5" rx="1"/>
@@ -543,29 +819,44 @@
               </span>
               <h3 class="font-display font-bold text-lg text-white">Data Engineering &amp; Cloud</h3>
             </div>
-            <span class="font-mono text-xs text-[#00f2fe]">95%</span>
+            <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden" aria-hidden="true">
+              <div class="h-full w-[95%] rounded-full bg-gradient-to-r from-[#00f2fe] via-[#4facfe] to-[#ff2e4c]"></div>
+            </div>
+            <ul class="flex flex-wrap gap-2">
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-[#00f2fe]/40 text-[#00f2fe]">Python</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-[#ff2e4c]/40 text-[#ff8fa3]">PySpark</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Databricks (Medallion Architecture)</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">SQL</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Azure SQL</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Apache Airflow</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Streamlit</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Power BI</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#ff2e4c]/50 hover:text-[#ff8fa3] transition-colors">GitHub Actions (CI/CD)</li>
+            </ul>
           </div>
-          <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden" aria-hidden="true">
-            <div class="h-full w-[95%] rounded-full bg-gradient-to-r from-[#00f2fe] to-[#4facfe]"></div>
-          </div>
-          <ul class="flex flex-wrap gap-2">
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Python</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">PySpark</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Databricks (Medallion Architecture)</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">SQL</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Azure SQL</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Apache Airflow</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Streamlit</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">Power BI</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">GitHub Actions (CI/CD)</li>
-          </ul>
         </div>
 
         <!-- Categoría 2: Backend & Sistemas -->
-        <div data-stack-card="backend" data-particles-container class="reveal-on-scroll glass-card rounded-2xl p-6 sm:p-7 flex flex-col gap-5">
-          <div class="flex items-center justify-between gap-3">
+        <div data-stack-card="backend" class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="pixel-banner-grid-subtle px-6 py-3 border-b border-white/10 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 font-mono text-[11px] text-slate-300">
+              <span class="w-2 h-2 rounded-[2px] bg-[#4facfe]" aria-hidden="true"></span>
+              <span>STACK_02 // CORE</span>
+            </span>
+            <span class="flex items-center gap-2 font-mono text-xs text-white">
+              <span class="signal-meter" aria-hidden="true">
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+              </span>
+              <span>5/5</span>
+            </span>
+          </div>
+          <div class="p-6 sm:p-7 flex flex-col gap-5">
             <div class="flex items-center gap-3">
-              <span class="w-10 h-10 rounded-xl bg-[#4facfe]/10 border border-[#4facfe]/30 flex items-center justify-center text-[#4facfe]">
+              <span class="w-10 h-10 rounded-xl bg-[#4facfe]/10 border border-[#4facfe]/35 flex items-center justify-center text-[#4facfe]">
                 <!-- SVG custom: Seguridad RBAC & Arquitectura -->
                 <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 3l7 3v6c0 4.5-3 7.8-7 9-4-1.2-7-4.5-7-9V6l7-3z"/>
@@ -574,28 +865,43 @@
               </span>
               <h3 class="font-display font-bold text-lg text-white">Backend &amp; Sistemas</h3>
             </div>
-            <span class="font-mono text-xs text-[#4facfe]">92%</span>
+            <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden" aria-hidden="true">
+              <div class="h-full w-[92%] rounded-full bg-gradient-to-r from-[#00f2fe] via-[#4facfe] to-[#ff2e4c]"></div>
+            </div>
+            <ul class="flex flex-wrap gap-2">
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-[#00f2fe]/40 text-[#00f2fe]">FastAPI</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">Spring Boot</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">NestJS</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-[#ff2e4c]/40 text-[#ff8fa3]">PostgreSQL (Neon)</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">MongoDB</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">Docker</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#ff2e4c]/50 hover:text-[#ff8fa3] transition-colors">JWT &amp; RBAC Security</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">REST APIs</li>
+            </ul>
           </div>
-          <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden" aria-hidden="true">
-            <div class="h-full w-[92%] rounded-full bg-gradient-to-r from-[#4facfe] to-[#00f2fe]"></div>
-          </div>
-          <ul class="flex flex-wrap gap-2">
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">FastAPI</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">Spring Boot</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">NestJS</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">PostgreSQL (Neon)</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">MongoDB</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">Docker</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">JWT &amp; RBAC Security</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">REST APIs</li>
-          </ul>
         </div>
 
         <!-- Categoría 3: Frontend & Creative Tech -->
-        <div data-stack-card="creative" data-particles-container class="reveal-on-scroll glass-card rounded-2xl p-6 sm:p-7 flex flex-col gap-5">
-          <div class="flex items-center justify-between gap-3">
+        <div data-stack-card="creative" class="reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="pixel-banner-grid-subtle px-6 py-3 border-b border-white/10 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 font-mono text-[11px] text-slate-300">
+              <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+              <span>STACK_03 // CREATIVE</span>
+            </span>
+            <span class="flex items-center gap-2 font-mono text-xs text-white">
+              <span class="signal-meter" aria-hidden="true">
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar is-active"></span>
+                <span class="signal-bar"></span>
+              </span>
+              <span>4/5</span>
+            </span>
+          </div>
+          <div class="p-6 sm:p-7 flex flex-col gap-5">
             <div class="flex items-center gap-3">
-              <span class="w-10 h-10 rounded-xl bg-cyan-400/10 border border-cyan-400/30 flex items-center justify-center text-cyan-300">
+              <span class="w-10 h-10 rounded-xl bg-[#ff2e4c]/15 border border-[#ff2e4c]/35 flex items-center justify-center text-[#ff8fa3]">
                 <!-- SVG custom: Cubo 3D Wireframe / Creative Tech -->
                 <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 2.5l8.5 4.8v9.4L12 21.5l-8.5-4.8V7.3L12 2.5z"/>
@@ -604,19 +910,18 @@
               </span>
               <h3 class="font-display font-bold text-lg text-white">Frontend &amp; Creative Tech</h3>
             </div>
-            <span class="font-mono text-xs text-cyan-300">88%</span>
+            <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden" aria-hidden="true">
+              <div class="h-full w-[88%] rounded-full bg-gradient-to-r from-[#00f2fe] via-[#4facfe] to-[#ff2e4c]"></div>
+            </div>
+            <ul class="flex flex-wrap gap-2">
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-[#00f2fe]/40 text-[#00f2fe]">JavaScript (ES6+)</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">Tailwind CSS</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">HTML5</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">React</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-[#ff2e4c]/40 text-[#ff8fa3]">Godot Engine (GDScript / Shaders)</li>
+              <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-[#ff2e4c]/40 text-[#ff8fa3]">ESP32 / Arduino (IoT)</li>
+            </ul>
           </div>
-          <div class="h-1.5 w-full rounded-full bg-white/10 overflow-hidden" aria-hidden="true">
-            <div class="h-full w-[88%] rounded-full bg-gradient-to-r from-[#00f2fe] to-indigo-400"></div>
-          </div>
-          <ul class="flex flex-wrap gap-2">
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">JavaScript (ES6+)</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">Tailwind CSS</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">HTML5</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">React</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">Godot Engine (GDScript / Shaders)</li>
-            <li class="px-3 py-1.5 rounded-lg text-xs font-mono bg-white/5 border border-white/10 text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">ESP32 / Arduino (IoT)</li>
-          </ul>
         </div>
       </div>
     </section>
@@ -626,8 +931,9 @@
     ==================================================================== -->
     <section id="proyectos" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div class="reveal-on-scroll max-w-3xl mb-12">
-        <p class="font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
-          // 03. Proyectos Destacados
+        <p class="inline-flex items-center gap-2 font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
+          <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+          <span>// 03. Proyectos Destacados</span>
         </p>
         <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
           Casos de Estudio y Arquitecturas en Producción
@@ -640,42 +946,24 @@
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
         <!-- Proyecto 1: Lignum ERP & POS -->
-        <article data-particles-container class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
-          <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#0b162d] via-[#091224] to-[#070913] border-b border-white/10">
-            <div class="project-thumb w-full h-full transition-transform duration-500 ease-out group-hover:scale-105 relative p-4 flex flex-col justify-between">
-              <!-- Diagrama SVG custom: Optimización melamina + N-Tier + Ticket térmico -->
-              <svg aria-hidden="true" viewBox="0 0 320 140" class="w-full h-full">
-                <defs>
-                  <linearGradient id="grad-lignum" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.35"/>
-                    <stop offset="100%" stop-color="#4facfe" stop-opacity="0.08"/>
-                  </linearGradient>
-                </defs>
-                <!-- Tablero de corte melamina -->
-                <rect x="14" y="24" width="84" height="92" rx="6" fill="url(#grad-lignum)" stroke="#00f2fe" stroke-opacity="0.45" stroke-width="1.2"/>
-                <line x1="52" y1="24" x2="52" y2="116" stroke="#00f2fe" stroke-opacity="0.35" stroke-dasharray="3 3"/>
-                <line x1="14" y1="68" x2="98" y2="68" stroke="#00f2fe" stroke-opacity="0.35" stroke-dasharray="3 3"/>
-                <text x="22" y="42" fill="#a5f3fc" font-family="JetBrains Mono, monospace" font-size="8">CUT_PLAN</text>
-                <!-- Conexión hacia API -->
-                <path d="M98 70h34" stroke="#00f2fe" stroke-width="1.5" stroke-dasharray="4 2"/>
-                <circle cx="115" cy="70" r="2.5" fill="#00f2fe"/>
-                <!-- Núcleo RBAC / FastAPI -->
-                <rect x="132" y="34" width="76" height="72" rx="8" fill="#0d1b36" stroke="#4facfe" stroke-opacity="0.6" stroke-width="1.4"/>
-                <text x="145" y="54" fill="#00f2fe" font-family="JetBrains Mono, monospace" font-size="8.5" font-weight="600">FASTAPI</text>
-                <text x="145" y="70" fill="#cbd5e1" font-family="JetBrains Mono, monospace" font-size="7.5">RBAC x5</text>
-                <text x="145" y="84" fill="#cbd5e1" font-family="JetBrains Mono, monospace" font-size="7.5">34 Pytest</text>
-                <!-- Conexión a SUNAT / Impresión -->
-                <path d="M208 54h28M208 86h28" stroke="#4facfe" stroke-width="1.4"/>
-                <rect x="236" y="34" width="70" height="30" rx="5" fill="#0d1b36" stroke="#00f2fe" stroke-opacity="0.45"/>
-                <text x="245" y="52" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="7.5">NUBEFACT</text>
-                <rect x="236" y="76" width="70" height="30" rx="5" fill="#0d1b36" stroke="#4facfe" stroke-opacity="0.45"/>
-                <text x="244" y="94" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="7.5">POS_DUAL</text>
-              </svg>
-              <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-[#070913]/80 border border-[#00f2fe]/35 font-mono text-[10px] text-[#00f2fe]">
-                ERP · N-TIER · SUNAT
-              </span>
-            </div>
+        <article class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="relative aspect-[16/9] overflow-hidden bg-[#090d1b]">
+            <img src="./assets/projects/lignum/lignum-login.png"
+                 alt="Pantalla de inicio de sesión del sistema Lignum ERP & POS"
+                 loading="lazy"
+                 decoding="async"
+                 class="project-thumb w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105">
+            <!-- Degradado HUD sutil en bordes para integrar la captura sin opacar el centro -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#070913]/80 via-transparent to-[#070913]/25 pointer-events-none" aria-hidden="true"></div>
+            <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#070913]/85 border border-[#00f2fe]/40 backdrop-blur-sm font-mono text-[10px] text-[#00f2fe]">
+              <span class="w-1.5 h-1.5 rounded-[1px] bg-[#ff2e4c]" aria-hidden="true"></span>
+              <span>ERP · N-TIER · SUNAT</span>
+            </span>
+            <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-[#070913]/85 border border-white/15 backdrop-blur-sm font-mono text-[10px] text-slate-200">
+              4 CAPTURAS
+            </span>
           </div>
+          <div class="tricolor-bar" aria-hidden="true"></div>
 
           <div class="p-6 flex flex-col flex-1 justify-between gap-5">
             <div class="space-y-3">
@@ -686,28 +974,39 @@
                 Sistema empresarial web a medida para la industria maderera y melamina. Arquitectura N-tier, 5 niveles de roles (RBAC), facturación electrónica (Nubefact/Migo), impresión térmica dual y 34 pruebas unitarias automatizadas.
               </p>
               <ul class="flex flex-wrap gap-1.5 pt-1">
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">FastAPI</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#00f2fe]/35 font-mono text-[11px] text-[#00f2fe]">FastAPI</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Neon PostgreSQL</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Vanilla JS</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Tailwind CSS</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Pytest</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#ff2e4c]/40 font-mono text-[11px] text-[#ff8fa3]">Pytest</li>
               </ul>
             </div>
 
-            <button type="button"
-                    data-project-id="lignum"
-                    class="project-open-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
-              <span>Ver Arquitectura y README</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-              </svg>
-            </button>
+            <div class="flex items-center gap-2.5">
+              <button type="button"
+                      data-project-id="lignum"
+                      class="project-open-btn flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
+                <span>Ver Arquitectura y README</span>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </button>
+              <a href="https://github.com/robertpid/lignum-showcase"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Abrir repositorio Lignum ERP en GitHub"
+                 class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/15 text-slate-300 hover:border-[#ff2e4c]/60 hover:bg-[#ff2e4c]/10 hover:text-white transition-all duration-200 shrink-0">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
 
         <!-- Proyecto 2: End-to-End AML Data Pipeline -->
-        <article data-particles-container class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
-          <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#091c2f] via-[#0a1326] to-[#070913] border-b border-white/10">
+        <article class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="relative aspect-[16/9] overflow-hidden pixel-banner-grid-subtle">
             <div class="project-thumb w-full h-full transition-transform duration-500 ease-out group-hover:scale-105 relative p-4">
               <!-- Diagrama SVG custom: Arquitectura Medallón & Detección AML -->
               <svg aria-hidden="true" viewBox="0 0 320 140" class="w-full h-full">
@@ -733,11 +1032,13 @@
                 <circle cx="247" cy="70" r="2.5" fill="#f43f5e"/>
                 <text x="229" y="100" fill="#bae6fd" font-family="JetBrains Mono, monospace" font-size="6.8">Azure SQL · CI/CD</text>
               </svg>
-              <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-[#070913]/80 border border-[#4facfe]/35 font-mono text-[10px] text-[#4facfe]">
-                MEDALLION · PYSPARK · CI/CD
+              <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#070913]/85 border border-[#4facfe]/40 font-mono text-[10px] text-[#4facfe]">
+                <span class="w-1.5 h-1.5 rounded-[1px] bg-[#ff2e4c]" aria-hidden="true"></span>
+                <span>MEDALLION · PYSPARK · CI/CD</span>
               </span>
             </div>
           </div>
+          <div class="tricolor-bar" aria-hidden="true"></div>
 
           <div class="p-6 flex flex-col flex-1 justify-between gap-5">
             <div class="space-y-3">
@@ -748,56 +1049,56 @@
                 Pipeline de ingeniería de datos para la detección de lavado de activos. Implementación de Arquitectura Medallón (Bronze, Silver, Gold), procesamiento distribuido y despliegue automatizado.
               </p>
               <ul class="flex flex-wrap gap-1.5 pt-1">
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Databricks</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#00f2fe]/35 font-mono text-[11px] text-[#00f2fe]">Databricks</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">PySpark</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Azure SQL</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Docker</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">GitHub Actions</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#ff2e4c]/40 font-mono text-[11px] text-[#ff8fa3]">GitHub Actions</li>
               </ul>
             </div>
 
-            <button type="button"
-                    data-project-id="aml"
-                    class="project-open-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
-              <span>Ver Arquitectura y README</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-              </svg>
-            </button>
+            <div class="flex items-center gap-2.5">
+              <button type="button"
+                      data-project-id="aml"
+                      class="project-open-btn flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
+                <span>Ver Arquitectura y README</span>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </button>
+              <a href="https://github.com/robertpid/end-to-end-aml-pipeline"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Abrir repositorio End-to-End AML Pipeline en GitHub"
+                 class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/15 text-slate-300 hover:border-[#ff2e4c]/60 hover:bg-[#ff2e4c]/10 hover:text-white transition-all duration-200 shrink-0">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
 
         <!-- Proyecto 3: Kyberna IA (Hackathon IA+) -->
-        <article data-particles-container class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
-          <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#0e1535] via-[#091224] to-[#070913] border-b border-white/10">
-            <div class="project-thumb w-full h-full transition-transform duration-500 ease-out group-hover:scale-105 relative p-4">
-              <!-- Diagrama SVG custom: Radar Orbital Multi-Agente IA -->
-              <svg aria-hidden="true" viewBox="0 0 320 140" class="w-full h-full">
-                <!-- Anillos radar -->
-                <circle cx="170" cy="76" r="46" fill="none" stroke="#00f2fe" stroke-opacity="0.18" stroke-dasharray="3 3"/>
-                <circle cx="170" cy="76" r="28" fill="none" stroke="#4facfe" stroke-opacity="0.35"/>
-                <circle cx="170" cy="76" r="10" fill="#00f2fe" fill-opacity="0.25" stroke="#00f2fe"/>
-                <text x="163" y="79" fill="#f8fafc" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700">AI</text>
-                <!-- Satélites de ingesta -->
-                <rect x="20" y="28" width="76" height="22" rx="4" fill="#0d1b36" stroke="#00f2fe" stroke-opacity="0.45"/>
-                <text x="29" y="42" fill="#a5f3fc" font-family="JetBrains Mono, monospace" font-size="7.5">NASA EONET</text>
-                <rect x="20" y="64" width="76" height="22" rx="4" fill="#0d1b36" stroke="#4facfe" stroke-opacity="0.45"/>
-                <text x="31" y="78" fill="#bfdbfe" font-family="JetBrains Mono, monospace" font-size="7.5">NOAA / CLI</text>
-                <rect x="20" y="100" width="76" height="22" rx="4" fill="#0d1b36" stroke="#00f2fe" stroke-opacity="0.45"/>
-                <text x="33" y="114" fill="#a5f3fc" font-family="JetBrains Mono, monospace" font-size="7.5">SENAMHI</text>
-                <!-- Líneas convergentes -->
-                <path d="M96 39L148 68M96 75h46M96 111l52-27" stroke="#00f2fe" stroke-opacity="0.55" stroke-width="1.2"/>
-                <!-- Salida logística -->
-                <path d="M216 76h26" stroke="#4facfe" stroke-width="1.5"/>
-                <rect x="242" y="54" width="64" height="44" rx="6" fill="#0d1b36" stroke="#00f2fe" stroke-opacity="0.6"/>
-                <text x="251" y="73" fill="#00f2fe" font-family="JetBrains Mono, monospace" font-size="7.5">DISPATCH</text>
-                <text x="251" y="87" fill="#cbd5e1" font-family="JetBrains Mono, monospace" font-size="7">React UI</text>
-              </svg>
-              <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-[#070913]/80 border border-cyan-400/35 font-mono text-[10px] text-cyan-300">
-                MULTI-AGENT AI · HACKATHON IA+
+        <article class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="relative aspect-[16/9] overflow-hidden bg-[#070913] flex flex-col">
+            <!-- Barra superior HUD para no tapar los paneles de métricas -->
+            <div class="px-3 py-1.5 bg-[#070913] border-b border-white/10 flex items-center justify-between shrink-0 z-10">
+              <span class="inline-flex items-center gap-1.5 font-mono text-[10px] text-cyan-300">
+                <span class="w-1.5 h-1.5 rounded-[1px] bg-[#ff2e4c]" aria-hidden="true"></span>
+                <span>MULTI-AGENT AI · HACKATHON IA+</span>
               </span>
+              <span class="font-mono text-[10px] text-slate-300">2 CAPTURAS</span>
+            </div>
+            <div class="relative flex-1 overflow-hidden bg-[#060913]">
+              <img src="./assets/projects/kyberna/kyberna-comando.jpg"
+                   alt="Kyberna IA — Centro de Mando Logístico con modelo ML predictivo (93.9%) y mapa OSRM en tiempo real"
+                   loading="lazy"
+                   decoding="async"
+                   class="project-thumb w-full h-full object-contain object-center transition-transform duration-500 ease-out group-hover:scale-[1.03]">
             </div>
           </div>
+          <div class="tricolor-bar" aria-hidden="true"></div>
 
           <div class="p-6 flex flex-col flex-1 justify-between gap-5">
             <div class="space-y-3">
@@ -808,53 +1109,54 @@
                 Sistema multi-agente impulsado por IA para la predicción de desastres naturales y coordinación logística en tiempo real, integrando APIs meteorológicas globales y scraping.
               </p>
               <ul class="flex flex-wrap gap-1.5 pt-1">
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Python</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">AI Agents</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#00f2fe]/35 font-mono text-[11px] text-[#00f2fe]">Python</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#ff2e4c]/40 font-mono text-[11px] text-[#ff8fa3]">AI Agents</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">APIs NASA EONET / NOAA / SENAMHI</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">React</li>
               </ul>
             </div>
 
-            <button type="button"
-                    data-project-id="kyberna"
-                    class="project-open-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
-              <span>Ver Arquitectura y README</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-              </svg>
-            </button>
+            <div class="flex items-center gap-2.5">
+              <button type="button"
+                      data-project-id="kyberna"
+                      class="project-open-btn flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
+                <span>Ver Arquitectura y README</span>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </button>
+              <a href="https://github.com/robertpid/kyberna-ia"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Abrir repositorio Kyberna IA en GitHub"
+                 class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/15 text-slate-300 hover:border-[#ff2e4c]/60 hover:bg-[#ff2e4c]/10 hover:text-white transition-all duration-200 shrink-0">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
 
         <!-- Proyecto 4: CRM B2B & Data Scraper (AIESEC) -->
-        <article data-particles-container class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
-          <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#0b182e] via-[#091224] to-[#070913] border-b border-white/10">
-            <div class="project-thumb w-full h-full transition-transform duration-500 ease-out group-hover:scale-105 relative p-4">
-              <!-- Diagrama SVG custom: Grafo de 800+ entidades B2B -> Neon PostgreSQL -->
-              <svg aria-hidden="true" viewBox="0 0 320 140" class="w-full h-full">
-                <!-- Grafo de empresas -->
-                <circle cx="42" cy="48" r="6" fill="#00f2fe" fill-opacity="0.25" stroke="#00f2fe"/>
-                <circle cx="88" cy="36" r="5" fill="#4facfe" fill-opacity="0.25" stroke="#4facfe"/>
-                <circle cx="46" cy="102" r="5" fill="#4facfe" fill-opacity="0.25" stroke="#4facfe"/>
-                <circle cx="96" cy="96" r="7" fill="#00f2fe" fill-opacity="0.3" stroke="#00f2fe"/>
-                <path d="M48 48l35-10M42 54l4 43M51 100l38-4M88 41l8 48" stroke="#4facfe" stroke-opacity="0.5" stroke-width="1.2"/>
-                <!-- Pipeline Scraper -->
-                <path d="M103 92l42-18" stroke="#00f2fe" stroke-width="1.4" stroke-dasharray="3 2"/>
-                <rect x="144" y="52" width="70" height="44" rx="7" fill="#0d1b36" stroke="#00f2fe" stroke-opacity="0.6"/>
-                <text x="155" y="71" fill="#00f2fe" font-family="JetBrains Mono, monospace" font-size="8" font-weight="600">SCRAPER</text>
-                <text x="155" y="84" fill="#cbd5e1" font-family="JetBrains Mono, monospace" font-size="7">FastAPI</text>
-                <!-- Cilindro Neon DB -->
-                <path d="M214 74h22" stroke="#00f2fe" stroke-width="1.5"/>
-                <ellipse cx="268" cy="48" rx="30" ry="9" fill="#082f49" stroke="#00f2fe" stroke-opacity="0.7"/>
-                <path d="M238 48v44c0 5 13.4 9 30 9s30-4 30-9V48" fill="#082f49" fill-opacity="0.55" stroke="#00f2fe" stroke-opacity="0.7"/>
-                <text x="250" y="74" fill="#f8fafc" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700">800+</text>
-                <text x="247" y="87" fill="#a5f3fc" font-family="JetBrains Mono, monospace" font-size="6.8">NEON_PG</text>
-              </svg>
-              <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-[#070913]/80 border border-[#00f2fe]/35 font-mono text-[10px] text-[#00f2fe]">
-                B2B CRM · SCRAPER · NEON
-              </span>
-            </div>
+        <article class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="relative aspect-[16/9] overflow-hidden bg-[#090d1b]">
+            <img src="./assets/projects/aiesec/aiesec-login.jpg"
+                 alt="Pantalla de acceso de la Plataforma B2B & Convenios de AIESEC"
+                 loading="lazy"
+                 decoding="async"
+                 class="project-thumb w-full h-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105">
+            <!-- Degradado HUD sutil en bordes para integrar la captura sin opacar el centro -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#070913]/80 via-transparent to-[#070913]/25 pointer-events-none" aria-hidden="true"></div>
+            <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#070913]/85 border border-[#00f2fe]/40 backdrop-blur-sm font-mono text-[10px] text-[#00f2fe]">
+              <span class="w-1.5 h-1.5 rounded-[1px] bg-[#ff2e4c]" aria-hidden="true"></span>
+              <span>B2B CRM · SCRAPER · NEON</span>
+            </span>
+            <span class="absolute top-3 right-3 px-2 py-0.5 rounded bg-[#070913]/85 border border-white/15 backdrop-blur-sm font-mono text-[10px] text-slate-200">
+              4 CAPTURAS
+            </span>
           </div>
+          <div class="tricolor-bar" aria-hidden="true"></div>
 
           <div class="p-6 flex flex-col flex-1 justify-between gap-5">
             <div class="space-y-3">
@@ -865,28 +1167,39 @@
                 Plataforma de gestión de relaciones corporativas y extracción automatizada de datos, optimizando la consulta y seguimiento de más de 800 entidades empresariales sin latencia.
               </p>
               <ul class="flex flex-wrap gap-1.5 pt-1">
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Python</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#00f2fe]/35 font-mono text-[11px] text-[#00f2fe]">Python</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">PostgreSQL</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Neon</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Web Scraping</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">FastAPI</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#ff2e4c]/40 font-mono text-[11px] text-[#ff8fa3]">FastAPI</li>
               </ul>
             </div>
 
-            <button type="button"
-                    data-project-id="crm"
-                    class="project-open-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
-              <span>Ver Arquitectura y README</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-              </svg>
-            </button>
+            <div class="flex items-center gap-2.5">
+              <button type="button"
+                      data-project-id="crm"
+                      class="project-open-btn flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
+                <span>Ver Arquitectura y README</span>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </button>
+              <a href="https://github.com/robertpid/CMR-AIESEC-showcase"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Abrir repositorio CRM AIESEC en GitHub"
+                 class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/15 text-slate-300 hover:border-[#ff2e4c]/60 hover:bg-[#ff2e4c]/10 hover:text-white transition-all duration-200 shrink-0">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
 
         <!-- Proyecto 5: M.O.S.S. / Helio (Wearable IoT Telemetry) -->
-        <article data-particles-container class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
-          <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#0a1c28] via-[#091224] to-[#070913] border-b border-white/10">
+        <article class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="relative aspect-[16/9] overflow-hidden pixel-banner-grid-subtle">
             <div class="project-thumb w-full h-full transition-transform duration-500 ease-out group-hover:scale-105 relative p-4">
               <!-- Diagrama SVG custom: Hardware PCB ESP32 + Ondas ESP-NOW + Telegram -->
               <svg aria-hidden="true" viewBox="0 0 320 140" class="w-full h-full">
@@ -905,11 +1218,13 @@
                 <text x="186" y="78" fill="#cbd5e1" font-family="JetBrains Mono, monospace" font-size="7.2">Webhook · Clima RT</text>
                 <circle cx="284" cy="58" r="3" fill="#34d399"/>
               </svg>
-              <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-[#070913]/80 border border-[#4facfe]/35 font-mono text-[10px] text-[#4facfe]">
-                ESP-NOW · WEARABLE · TELEMETRÍA
+              <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#070913]/85 border border-[#4facfe]/40 font-mono text-[10px] text-[#4facfe]">
+                <span class="w-1.5 h-1.5 rounded-[1px] bg-[#ff2e4c]" aria-hidden="true"></span>
+                <span>ESP-NOW · WEARABLE · TELEMETRÍA</span>
               </span>
             </div>
           </div>
+          <div class="tricolor-bar" aria-hidden="true"></div>
 
           <div class="p-6 flex flex-col flex-1 justify-between gap-5">
             <div class="space-y-3">
@@ -921,77 +1236,104 @@
               </p>
               <ul class="flex flex-wrap gap-1.5 pt-1">
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">C++</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">ESP32</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Python</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#ff2e4c]/40 font-mono text-[11px] text-[#ff8fa3]">ESP32</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#00f2fe]/35 font-mono text-[11px] text-[#00f2fe]">Python</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Telegram Webhooks</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">APIs</li>
               </ul>
             </div>
 
-            <button type="button"
-                    data-project-id="moss"
-                    class="project-open-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
-              <span>Ver Arquitectura y README</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-              </svg>
-            </button>
+            <div class="flex items-center gap-2.5">
+              <button type="button"
+                      data-project-id="moss"
+                      class="project-open-btn flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
+                <span>Ver Arquitectura y README</span>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </button>
+              <a href="https://github.com/robertpid/HELIOS-Biomimetic-Edge-AI"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Abrir repositorio HELIOS Biomimetic Edge AI en GitHub"
+                 class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/15 text-slate-300 hover:border-[#ff2e4c]/60 hover:bg-[#ff2e4c]/10 hover:text-white transition-all duration-200 shrink-0">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
 
-        <!-- Proyecto 6: Dashboard Industrial & ASHERAH (Indie Game) -->
-        <article data-particles-container class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
-          <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#16122e] via-[#091224] to-[#070913] border-b border-white/10">
-            <div class="project-thumb crt-scanlines w-full h-full transition-transform duration-500 ease-out group-hover:scale-105 relative p-4">
-              <!-- Diagrama SVG custom: Split Industrial BI + Retícula 3D Retro PS1 ASHERAH -->
+        <!-- Proyecto 6: App de Rendimiento Industrial (PyS) -->
+        <article class="reveal-on-scroll group glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="relative aspect-[16/9] overflow-hidden pixel-banner-grid-subtle">
+            <div class="project-thumb w-full h-full transition-transform duration-500 ease-out group-hover:scale-105 relative p-4">
+              <!-- Diagrama SVG custom: Dashboard Industrial PyS (OEE, Turnos y Tiempos Muertos) -->
               <svg aria-hidden="true" viewBox="0 0 320 140" class="w-full h-full">
-                <!-- Mitad izquierda: BI Planta -->
-                <rect x="14" y="34" width="134" height="86" rx="7" fill="#0d1b36" fill-opacity="0.85" stroke="#4facfe" stroke-opacity="0.5"/>
-                <rect x="28" y="82" width="14" height="24" rx="2" fill="#4facfe" fill-opacity="0.5"/>
-                <rect x="48" y="68" width="14" height="38" rx="2" fill="#00f2fe" fill-opacity="0.7"/>
-                <rect x="68" y="76" width="14" height="30" rx="2" fill="#4facfe" fill-opacity="0.5"/>
-                <rect x="88" y="56" width="14" height="50" rx="2" fill="#00f2fe"/>
-                <polyline points="28,66 55,54 75,60 95,46 130,44" fill="none" stroke="#a5f3fc" stroke-width="1.4"/>
-                <text x="26" y="48" fill="#cbd5e1" font-family="JetBrains Mono, monospace" font-size="7.5">PLANTA_OEE</text>
+                <!-- Panel principal de barras de rendimiento -->
+                <rect x="16" y="34" width="178" height="88" rx="7" fill="#0d1b36" fill-opacity="0.88" stroke="#4facfe" stroke-opacity="0.5"/>
+                <rect x="32" y="84" width="18" height="24" rx="2" fill="#4facfe" fill-opacity="0.55"/>
+                <rect x="60" y="68" width="18" height="40" rx="2" fill="#00f2fe" fill-opacity="0.78"/>
+                <rect x="88" y="76" width="18" height="32" rx="2" fill="#ff2e4c" fill-opacity="0.72"/>
+                <rect x="116" y="54" width="18" height="54" rx="2" fill="#00f2fe"/>
+                <rect x="144" y="62" width="18" height="46" rx="2" fill="#4facfe" fill-opacity="0.82"/>
+                <polyline points="41,72 69,58 97,66 125,44 153,50" fill="none" stroke="#a5f3fc" stroke-width="1.5"/>
+                <circle cx="125" cy="44" r="3" fill="#00f2fe"/>
+                <text x="28" y="48" fill="#cbd5e1" font-family="JetBrains Mono, monospace" font-size="7.5">PYS_RENDIMIENTO // OEE</text>
 
-                <!-- Mitad derecha: Motor 3D Retro CRT ASHERAH -->
-                <rect x="164" y="34" width="142" height="86" rx="7" fill="#09071a" fill-opacity="0.9" stroke="#00f2fe" stroke-opacity="0.55"/>
-                <!-- Perspectiva 3D piso -->
-                <path d="M164 104h142M180 86h110M195 72h80" stroke="#4facfe" stroke-opacity="0.35" stroke-width="1"/>
-                <path d="M235 66l-60 54M235 66l-25 54M235 66v54M235 66l25 54M235 66l60 54" stroke="#00f2fe" stroke-opacity="0.3" stroke-width="1"/>
-                <polygon points="235,44 252,58 235,72 218,58" fill="#00f2fe" fill-opacity="0.2" stroke="#00f2fe" stroke-width="1.2"/>
-                <text x="174" y="48" fill="#00f2fe" font-family="JetBrains Mono, monospace" font-size="7.5" font-weight="700">ASHERAH_3D</text>
+                <!-- Tarjeta KPI derecha: Eficiencia y Tiempos Muertos -->
+                <rect x="206" y="34" width="98" height="40" rx="6" fill="#071226" stroke="#00f2fe" stroke-opacity="0.55"/>
+                <text x="216" y="50" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="6.8">EFICIENCIA</text>
+                <text x="216" y="65" fill="#00f2fe" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">+KPI TURNOS</text>
+
+                <rect x="206" y="82" width="98" height="40" rx="6" fill="#071226" stroke="#ff2e4c" stroke-opacity="0.5"/>
+                <text x="216" y="98" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="6.8">DOWNTIME</text>
+                <text x="216" y="113" fill="#ff8fa3" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600">CONTROL_LOTE</text>
               </svg>
-              <span class="absolute top-3 left-3 px-2 py-0.5 rounded bg-[#070913]/85 border border-cyan-400/35 font-mono text-[10px] text-cyan-300">
-                STREAMLIT · GODOT 3D SHADERS
+              <span class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#070913]/85 border border-cyan-400/40 font-mono text-[10px] text-cyan-300">
+                <span class="w-1.5 h-1.5 rounded-[1px] bg-[#ff2e4c]" aria-hidden="true"></span>
+                <span>STREAMLIT · PANDAS · ANALYTICS</span>
               </span>
             </div>
           </div>
+          <div class="tricolor-bar" aria-hidden="true"></div>
 
           <div class="p-6 flex flex-col flex-1 justify-between gap-5">
             <div class="space-y-3">
               <h3 class="font-display font-bold text-xl text-white group-hover:text-[#00f2fe] transition-colors">
-                Dashboard de Optimización Industrial &amp; ASHERAH (Indie Game)
+                App de Rendimiento Industrial (PyS)
               </h3>
               <p class="text-sm text-slate-300 leading-relaxed">
-                Por un lado, un sistema en Streamlit para control de rendimientos y tiempos muertos en planta de procesamiento; por otro, el desarrollo de ASHERAH, videojuego de terror psicológico retro 3D con shaders CRT.
+                Aplicación analítica en Streamlit y Pandas para el control de rendimientos operativos, tiempos muertos y eficiencia productiva por lote y turno en planta PyS.
               </p>
               <ul class="flex flex-wrap gap-1.5 pt-1">
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Streamlit</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#00f2fe]/35 font-mono text-[11px] text-[#00f2fe]">Streamlit</li>
                 <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Pandas</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Godot Engine</li>
-                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">3D Shaders</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-cyan-200">Python</li>
+                <li class="px-2.5 py-1 rounded-md bg-white/5 border border-[#ff2e4c]/40 font-mono text-[11px] text-[#ff8fa3]">KPI Analytics</li>
               </ul>
             </div>
 
-            <button type="button"
-                    data-project-id="industrial-asherah"
-                    class="project-open-btn w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
-              <span>Ver Arquitectura y README</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-              </svg>
-            </button>
+            <div class="flex items-center gap-2.5">
+              <button type="button"
+                      data-project-id="pys-rendimiento"
+                      class="project-open-btn flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/15 text-white hover:border-[#00f2fe]/60 hover:bg-[#00f2fe]/10 hover:text-[#00f2fe] hover:-translate-y-0.5 transition-all duration-200">
+                <span>Ver Arquitectura y README</span>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </button>
+              <a href="https://github.com/robertpid/PyS_app_redimiento"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Abrir repositorio PyS App Rendimiento en GitHub"
+                 class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/15 text-slate-300 hover:border-[#ff2e4c]/60 hover:bg-[#ff2e4c]/10 hover:text-white transition-all duration-200 shrink-0">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </article>
 
@@ -1003,8 +1345,9 @@
     ==================================================================== -->
     <section id="trayectoria" class="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div class="reveal-on-scroll max-w-3xl mb-12">
-        <p class="font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
-          // 04. Trayectoria &amp; Credenciales
+        <p class="inline-flex items-center gap-2 font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe] mb-3">
+          <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+          <span>// 04. Trayectoria &amp; Credenciales</span>
         </p>
         <h2 class="font-display font-bold text-3xl sm:text-4xl text-white tracking-tight">
           Certificaciones, Hackathons y Comunidad Tech
@@ -1013,74 +1356,87 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Certificaciones -->
-        <div data-particles-container class="lg:col-span-7 reveal-on-scroll glass-card rounded-2xl p-6 sm:p-8 space-y-6">
-          <div class="flex items-center gap-3">
-            <span class="w-10 h-10 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/30 flex items-center justify-center text-[#00f2fe]">
-              <!-- SVG custom: Sello / Medalla Certificada -->
-              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="9" r="5.5"/>
-                <path d="M8.5 14l-1.5 7 5-2.5 5 2.5-1.5-7"/>
-              </svg>
+        <div class="lg:col-span-7 reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col">
+          <div class="pixel-banner-grid-subtle px-6 sm:px-8 py-3.5 border-b border-white/10 flex items-center justify-between">
+            <span class="inline-flex items-center gap-2 font-mono text-xs text-slate-300">
+              <span class="w-2 h-2 rounded-[2px] bg-[#00f2fe]" aria-hidden="true"></span>
+              <span>CREDENTIALS // VERIFIED</span>
             </span>
-            <h3 class="font-display font-bold text-xl text-white">Certificaciones Técnicas</h3>
           </div>
+          <div class="p-6 sm:p-8 space-y-6 flex-1">
+            <div class="flex items-center gap-3">
+              <span class="w-10 h-10 rounded-xl bg-[#00f2fe]/10 border border-[#00f2fe]/30 flex items-center justify-center text-[#00f2fe]">
+                <!-- SVG custom: Sello / Medalla Certificada -->
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="9" r="5.5"/>
+                  <path d="M8.5 14l-1.5 7 5-2.5 5 2.5-1.5-7"/>
+                </svg>
+              </span>
+              <h3 class="font-display font-bold text-xl text-white">Certificaciones Técnicas</h3>
+            </div>
 
-          <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <li class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#00f2fe]/40 transition-colors">
-              <p class="font-mono text-[11px] text-[#00f2fe] mb-1">DATA &amp; LAKEHOUSE</p>
-              <p class="font-semibold text-white text-sm sm:text-base">Databricks Fundamentals</p>
-            </li>
-            <li class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#00f2fe]/40 transition-colors">
-              <p class="font-mono text-[11px] text-[#4facfe] mb-1">ANALYTICS</p>
-              <p class="font-semibold text-white text-sm sm:text-base">Google Data Analytics Professional Certificate</p>
-            </li>
-            <li class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#00f2fe]/40 transition-colors">
-              <p class="font-mono text-[11px] text-cyan-300 mb-1">PROGRAMMING</p>
-              <p class="font-semibold text-white text-sm sm:text-base">Python Essentials</p>
-            </li>
-            <li class="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#00f2fe]/40 transition-colors">
-              <p class="font-mono text-[11px] text-emerald-300 mb-1">LANGUAGE</p>
-              <p class="font-semibold text-white text-sm sm:text-base">EF SET English B2 Upper Intermediate</p>
-            </li>
-          </ul>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <li class="p-4 rounded-xl bg-[#070913]/60 border border-white/10 hover:border-[#00f2fe]/45 transition-colors">
+                <p class="font-mono text-[11px] text-[#00f2fe] mb-1">DATA &amp; LAKEHOUSE</p>
+                <p class="font-semibold text-white text-sm sm:text-base">Databricks Fundamentals</p>
+              </li>
+              <li class="p-4 rounded-xl bg-[#070913]/60 border border-white/10 hover:border-[#ff2e4c]/45 transition-colors">
+                <p class="font-mono text-[11px] text-[#ff8fa3] mb-1">PROGRAMMING</p>
+                <p class="font-semibold text-white text-sm sm:text-base">Python Essentials</p>
+              </li>
+              <li class="sm:col-span-2 p-4 rounded-xl bg-[#070913]/60 border border-white/10 hover:border-emerald-400/45 transition-colors">
+                <p class="font-mono text-[11px] text-emerald-300 mb-1">LANGUAGE</p>
+                <p class="font-semibold text-white text-sm sm:text-base">EF SET English B2 Upper Intermediate</p>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <!-- Hackathons & Comunidad -->
-        <div data-particles-container class="lg:col-span-5 reveal-on-scroll glass-card rounded-2xl p-6 sm:p-8 flex flex-col justify-between gap-6">
-          <div class="space-y-6">
-            <div class="flex items-center gap-3">
-              <span class="w-10 h-10 rounded-xl bg-[#4facfe]/10 border border-[#4facfe]/30 flex items-center justify-center text-[#4facfe]">
-                <!-- SVG custom: Trofeo Hackathon -->
-                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/>
-                  <path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 15v4M8 20h8"/>
-                </svg>
+        <div class="lg:col-span-5 reveal-on-scroll glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+          <div>
+            <div class="pixel-banner-grid-subtle px-6 sm:px-8 py-3.5 border-b border-white/10 flex items-center justify-between">
+              <span class="inline-flex items-center gap-2 font-mono text-xs text-slate-300">
+                <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+                <span>TEAM_BUILDING // LIVE</span>
               </span>
-              <h3 class="font-display font-bold text-xl text-white">Hackathons y Liderazgo</h3>
             </div>
 
-            <div class="space-y-4">
-              <div class="relative pl-5 border-l-2 border-[#00f2fe]/40">
-                <span class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#00f2fe]" aria-hidden="true"></span>
-                <p class="font-semibold text-white text-sm sm:text-base">Hackathons: UPN IA+ &amp; Cajathón</p>
-                <p class="text-sm text-slate-300 mt-1">
-                  Diseño y prototipado rápido de soluciones multi-agente con IA (Kyberna IA) y plataformas cívicas/empresariales de alto impacto en tiempo récord.
-                </p>
+            <div class="p-6 sm:p-8 space-y-6">
+              <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-[#ff2e4c]/15 border border-[#ff2e4c]/35 flex items-center justify-center text-[#ff8fa3]">
+                  <!-- SVG custom: Trofeo Hackathon -->
+                  <svg aria-hidden="true" viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/>
+                    <path d="M7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 15v4M8 20h8"/>
+                  </svg>
+                </span>
+                <h3 class="font-display font-bold text-xl text-white">Hackathons y Liderazgo</h3>
               </div>
 
-              <div class="relative pl-5 border-l-2 border-[#4facfe]/40">
-                <span class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#4facfe]" aria-hidden="true"></span>
-                <p class="font-semibold text-white text-sm sm:text-base">Voluntariado en AIESEC Perú</p>
-                <p class="text-sm text-slate-300 mt-1">
-                  Relaciones Corporativas B2B, gestión estratégica de alianzas empresariales y construcción de CRM/Scrapers internos para potenciar el seguimiento de +800 organizaciones.
-                </p>
+              <div class="space-y-4">
+                <div class="relative pl-5 border-l-2 border-[#ff2e4c]/55">
+                  <span class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#ff2e4c]" aria-hidden="true"></span>
+                  <p class="font-semibold text-white text-sm sm:text-base">Hackathons: UPN IA+ &amp; Cajathón</p>
+                  <p class="text-sm text-slate-300 mt-1">
+                    Diseño y prototipado rápido de soluciones multi-agente con IA (Kyberna IA) y plataformas cívicas/empresariales de alto impacto en tiempo récord.
+                  </p>
+                </div>
+
+                <div class="relative pl-5 border-l-2 border-[#00f2fe]/45">
+                  <span class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-[#00f2fe]" aria-hidden="true"></span>
+                  <p class="font-semibold text-white text-sm sm:text-base">Voluntariado en AIESEC Perú</p>
+                  <p class="text-sm text-slate-300 mt-1">
+                    Relaciones Corporativas B2B, gestión estratégica de alianzas empresariales y construcción de CRM/Scrapers internos para potenciar el seguimiento de +800 organizaciones.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400">
+          <div class="px-6 sm:px-8 py-4 bg-[#070913]/60 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400">
             <span>Comunidad &amp; Territorio</span>
-            <span class="text-[#00f2fe]">Perú · Global B2B</span>
+            <span class="text-[#ff8fa3]">Perú · <span class="text-[#00f2fe]">Global B2B</span></span>
           </div>
         </div>
       </div>
@@ -1091,85 +1447,91 @@
   <!-- ===================================================================
        H. FOOTER / CONTACTO
   ==================================================================== -->
-  <footer id="contacto" class="border-t border-white/10 bg-[#05070f]/90 pt-16 sm:pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+  <footer id="contacto" class="relative z-10 border-t border-white/10 bg-[#05070f]/75 pt-16 sm:pt-24 pb-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
-      <div data-particles-container class="reveal-on-scroll glass-card rounded-3xl p-8 sm:p-12 lg:p-14 text-center relative overflow-hidden">
-        <!-- Partículas interactivas en canvas que siguen al cursor -->
-        <canvas data-particles-canvas aria-hidden="true" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
-        <div class="max-w-2xl mx-auto space-y-6 relative z-10">
-          <p class="font-mono text-xs sm:text-sm uppercase tracking-widest text-[#00f2fe]">
-            // 05. Contacto Directo
-          </p>
-          <h2 class="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
-            ¿Listo para construir soluciones de alto impacto?
-          </h2>
-          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Abierto a oportunidades como Data Engineer, Full-Stack Developer, consultorías de arquitectura de datos y proyectos tecnológicos ambiciosos.
-          </p>
+      <div class="reveal-on-scroll glass-card rounded-3xl overflow-hidden text-center">
+        <div class="pixel-banner-grid px-6 py-3.5 border-b border-[#ff2e4c]/30 flex items-center justify-between">
+          <span class="inline-flex items-center gap-2 font-mono text-xs text-slate-200">
+            <span class="w-2 h-2 rounded-[2px] bg-[#ff2e4c]" aria-hidden="true"></span>
+            <span>// 05. CONTACTO DIRECTO</span>
+          </span>
+          <span class="font-mono text-[11px] text-[#00f2fe]">READY_FOR_TEAM // 100%</span>
+        </div>
+        <div class="tricolor-bar" aria-hidden="true"></div>
 
-          <!-- Acciones directas de correo -->
-          <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <a href="mailto:robertpid2@gmail.com"
-               class="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm sm:text-base btn-primary-glow hover:-translate-y-1">
-              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="5" width="18" height="14" rx="2.5"/>
-                <path d="M4 7l8 6 8-6"/>
-              </svg>
-              <span>robertpid2@gmail.com</span>
-              <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 8h10M9 4l4 4-4 4"/>
-              </svg>
-            </a>
+        <div class="p-8 sm:p-12 lg:p-14">
+          <div class="max-w-2xl mx-auto space-y-6">
+            <h2 class="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-white tracking-tight leading-tight">
+              ¿Listo para construir soluciones de alto impacto?
+            </h2>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Abierto a oportunidades como Data Engineer, Full-Stack Developer, consultorías de arquitectura de datos y proyectos tecnológicos ambiciosos.
+            </p>
 
-            <button id="copy-email-btn"
-                    type="button"
-                    class="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-mono text-xs sm:text-sm bg-white/5 border border-white/15 text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] hover:-translate-y-1 transition-all duration-200">
-              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="9" y="9" width="11" height="11" rx="2"/>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-              </svg>
-              <span id="copy-email-label">Copiar correo</span>
-            </button>
-          </div>
+            <!-- Acciones directas de correo -->
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <a href="mailto:robertpid2@gmail.com"
+                 class="group inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl font-semibold text-sm sm:text-base btn-primary-glow hover:-translate-y-1">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="5" width="18" height="14" rx="2.5"/>
+                  <path d="M4 7l8 6 8-6"/>
+                </svg>
+                <span>robertpid2@gmail.com</span>
+                <svg aria-hidden="true" viewBox="0 0 16 16" class="magnetic-arrow w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 8h10M9 4l4 4-4 4"/>
+                </svg>
+              </a>
 
-          <p id="copy-status" class="sr-only" aria-live="polite"></p>
+              <button id="copy-email-btn"
+                      type="button"
+                      class="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-mono text-xs sm:text-sm bg-white/5 border border-white/15 text-slate-200 hover:border-[#ff2e4c]/60 hover:text-[#ff8fa3] hover:-translate-y-1 transition-all duration-200">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="11" height="11" rx="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                <span id="copy-email-label">Copiar correo</span>
+              </button>
+            </div>
 
-          <!-- Redes sociales con iconos SVG custom -->
-          <div class="pt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            <!-- TODO: Reemplaza con tu URL exacta de LinkedIn -->
-            <a href="https://www.linkedin.com/in/robert-perez-soto"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">
-              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="4"/>
-                <path d="M8 11v5M8 8v.01M12 16v-5m0 2a2.5 2.5 0 0 1 5 0v3"/>
-              </svg>
-              <span>LinkedIn</span>
-            </a>
+            <p id="copy-status" class="sr-only" aria-live="polite"></p>
 
-            <a href="https://github.com/robertpid"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">
-              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
-              </svg>
-              <span>GitHub</span>
-            </a>
+            <!-- Redes sociales con iconos SVG custom -->
+            <div class="pt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              <!-- TODO: Reemplaza con tu URL exacta de LinkedIn -->
+              <a href="https://www.linkedin.com/in/robert-perez-soto"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200 hover:border-[#4facfe]/50 hover:text-[#4facfe] transition-colors">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="4"/>
+                  <path d="M8 11v5M8 8v.01M12 16v-5m0 2a2.5 2.5 0 0 1 5 0v3"/>
+                </svg>
+                <span>LinkedIn</span>
+              </a>
 
-            <!-- TODO: Reemplaza con tu usuario exacto de Instagram -->
-            <a href="https://www.instagram.com/robertpid"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200 hover:border-cyan-300/50 hover:text-cyan-300 transition-colors">
-              <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="5"/>
-                <circle cx="12" cy="12" r="4"/>
-                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
-              </svg>
-              <span>Instagram</span>
-            </a>
+              <a href="https://github.com/robertpid"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200 hover:border-[#00f2fe]/50 hover:text-[#00f2fe] transition-colors">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/>
+                </svg>
+                <span>GitHub</span>
+              </a>
+
+              <!-- TODO: Reemplaza con tu usuario exacto de Instagram -->
+              <a href="https://www.instagram.com/robertpid"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-slate-200 hover:border-[#ff2e4c]/55 hover:text-[#ff8fa3] transition-colors">
+                <svg aria-hidden="true" viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="5"/>
+                  <circle cx="12" cy="12" r="4"/>
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+                </svg>
+                <span>Instagram</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -1186,6 +1548,7 @@
        MODAL NATIVO <dialog> PARA ARQUITECTURA & README CASE STUDIES
   ==================================================================== -->
   <dialog id="project-modal" class="case-study-dialog" closedby="any" aria-labelledby="modal-project-title">
+    <div class="tricolor-bar" aria-hidden="true"></div>
     <div class="p-6 sm:p-8 space-y-6">
       <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-4">
         <div>
@@ -1203,6 +1566,17 @@
       </div>
 
       <div class="space-y-4">
+        <!-- Galería interactiva de capturas reales (cuando el proyecto tiene vistas disponibles) -->
+        <div id="modal-gallery" hidden class="space-y-2.5">
+          <div class="relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-white/15 bg-[#090d1b]">
+            <img id="modal-gallery-image" src="" alt="" class="w-full h-full object-contain">
+          </div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div id="modal-gallery-tabs" class="flex flex-wrap gap-1.5"></div>
+            <p id="modal-gallery-caption" class="text-xs text-slate-400 font-mono"></p>
+          </div>
+        </div>
+
         <div>
           <h3 class="font-mono text-xs uppercase tracking-wider text-slate-400 mb-1.5">Resumen Técnico</h3>
           <p id="modal-project-summary" class="text-sm sm:text-base text-slate-200 leading-relaxed"></p>

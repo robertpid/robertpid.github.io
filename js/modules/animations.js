@@ -5,11 +5,27 @@
  */
 export function initScrollReveal() {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const revealElements = document.querySelectorAll('.reveal-on-scroll');
+  const revealElements = Array.from(document.querySelectorAll('.reveal-on-scroll'));
+
+  if (!revealElements.length) {
+    initScrollProgressFallback(prefersReducedMotion);
+    return;
+  }
+
+  // Escalonamiento automático entre tarjetas hermanas dentro de una grilla
+  const siblingCounters = new WeakMap();
+  revealElements.forEach((el) => {
+    const parent = el.parentElement;
+    if (parent && parent.classList.contains('grid')) {
+      const order = siblingCounters.get(parent) || 0;
+      siblingCounters.set(parent, order + 1);
+      el.style.setProperty('--reveal-delay', `${(order % 4) * 90}ms`);
+    }
+  });
 
   if (prefersReducedMotion || !('IntersectionObserver' in window)) {
     revealElements.forEach((el) => el.classList.add('is-visible'));
-  } else if (revealElements.length) {
+  } else {
     const revealObserver = new IntersectionObserver(
       (entries, observer) => {
         entries.forEach((entry) => {
@@ -18,10 +34,17 @@ export function initScrollReveal() {
           observer.unobserve(entry.target);
         });
       },
-      { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+      { threshold: 0.12, rootMargin: '0px 0px -45px 0px' }
     );
 
-    revealElements.forEach((el) => revealObserver.observe(el));
+    revealElements.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.85) {
+        el.classList.add('is-visible');
+      } else {
+        revealObserver.observe(el);
+      }
+    });
   }
 
   initScrollProgressFallback(prefersReducedMotion);

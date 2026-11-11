@@ -14,9 +14,9 @@ export function initStackFilter() {
       filterButtons.forEach((other) => {
         const isSelected = other === btn;
         other.setAttribute('aria-pressed', String(isSelected));
-        other.classList.toggle('border-[#00f2fe]/50', isSelected);
-        other.classList.toggle('bg-[#00f2fe]/15', isSelected);
-        other.classList.toggle('text-[#00f2fe]', isSelected);
+        other.classList.toggle('border-[#ff2e4c]/70', isSelected);
+        other.classList.toggle('bg-[#ff2e4c]/15', isSelected);
+        other.classList.toggle('text-white', isSelected);
         other.classList.toggle('border-white/10', !isSelected);
         other.classList.toggle('bg-white/5', !isSelected);
         other.classList.toggle('text-slate-300', !isSelected);
@@ -30,4 +30,3 @@ export function initStackFilter() {
     });
   });
 }
-

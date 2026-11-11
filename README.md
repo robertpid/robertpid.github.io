@@ -23,7 +23,8 @@ portafolio/
         ├── stackFilter.js      # Filtrado interactivo por categoría del Stack Tecnológico
         ├── projectModal.js     # Modal nativo <dialog> para Arquitectura y README
         ├── spotlight.js        # Efecto radial spotlight en tarjetas .glass-card
-        ├── particles.js        # Constelación interactiva con el cursor en todos los banners
+        ├── particles.js        # Constelación interactiva tricolor debajo de los banners
+        ├── hudProfile.js       # Toggle Foto / Pixel ID estilo Cajathón HUD en el Hero
         ├── roleRotator.js      # Consola rotativa de especialidades en el Hero
         └── contact.js          # Año dinámico, fallback de foto Hero y copia de correo
 ```

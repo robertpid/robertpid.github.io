@@ -6,6 +6,7 @@ import { initUtilities } from './modules/contact.js';
 import { initSpotlight } from './modules/spotlight.js';
 import { initRoleRotator } from './modules/roleRotator.js';
 import { initParticles } from './modules/particles.js';
+import { initHudProfile } from './modules/hudProfile.js';
 
 /**
  * Punto de entrada principal del portafolio (ES Modules nativos).
@@ -19,4 +20,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initSpotlight();
   initRoleRotator();
   initParticles();
+  initHudProfile();
 });
